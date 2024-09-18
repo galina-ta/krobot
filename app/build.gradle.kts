@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.gala.krotbot"
+    namespace = "com.gala.krobot"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.gala.krotbot"
+        applicationId = "com.gala.krobot"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
