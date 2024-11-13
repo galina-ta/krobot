@@ -17,7 +17,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,33 +47,45 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun Maze() {
     val cellSize = 60.dp
-    var x by remember {
-        mutableIntStateOf(0)
+    val walls = listOf(
+        Wall(position = Position(x = 3, y = 2)),
+        Wall(position = Position(x = 2, y = 2)),
+
+        )
+    var hero by remember {
+        mutableStateOf(Hero(position = Position(x = 0, y = 0), isDestroyed = false))
     }
-    var y by remember {
-        mutableIntStateOf(0)
-    }
+
     Column {
         Box(modifier = Modifier.size(cellSize * 10)) {
+            walls.forEach { wall ->
+                Image(
+                    modifier = Modifier
+                        .size(cellSize)
+                        .offset(x = cellSize * wall.position.x, y = cellSize * wall.position.y),
+                    painter = painterResource(id = R.drawable.wall),
+                    contentDescription = ""
+                )
+            }
             Image(
                 modifier = Modifier
                     .size(cellSize)
-                    .offset(x = cellSize * x, y = cellSize * y),
+                    .offset(x = cellSize * hero.position.x, y = cellSize * hero.position.y),
                 painter = painterResource(id = R.drawable.keyboard),
                 contentDescription = ""
             )
         }
         Row(modifier = Modifier.align(Alignment.CenterHorizontally)) {
-            Button(onClick = { x -= 1 }) {
+            Button(onClick = { hero = hero.movedLeft() }) {
                 Arrow(text = "◀")
             }
-            Button(onClick = { y -= 1 }) {
+            Button(onClick = { hero = hero.movedUp() }) {
                 Arrow(text = "▲")
             }
-            Button(onClick = { y += 1 }) {
+            Button(onClick = { hero = hero.movedDown() }) {
                 Arrow(text = "▼")
             }
-            Button(onClick = { x += 1 }) {
+            Button(onClick = { hero = hero.movedRight() }) {
                 Arrow(text = "▶")
             }
         }
@@ -85,13 +97,36 @@ private fun Arrow(text: String) {
     Text(text = text, fontSize = 25.sp)
 }
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
+
+data class Wall(val position: Position) {
+    fun heroMoved(hero: Hero): Hero {
+        return if (hero.position == position) {
+            hero.copy(isDestroyed = true)
+        } else {
+            hero
+        }
+    }
 }
+
+data class Hero(val position: Position, val isDestroyed: Boolean) {
+    fun movedUp(): Hero {
+        return copy(position = position.copy(y = position.y - 1))
+    }
+
+    fun movedDown(): Hero {
+        return copy(position = position.copy(y = position.y + 1))
+    }
+
+    fun movedLeft(): Hero {
+        return copy(position = position.copy(x = position.x - 1))
+    }
+
+    fun movedRight(): Hero {
+        return copy(position = position.copy(x = position.x + 1))
+    }
+}
+
+data class Position(val x: Int, val y: Int)
 
 @Preview(showBackground = true)
 @Composable
@@ -100,3 +135,4 @@ fun GreetingPreview() {
         Maze()
     }
 }
+
