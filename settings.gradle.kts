@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Krobot"
 include(":app")
- 
+include(":maze")
