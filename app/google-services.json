@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "713102723698",
+    "project_id": "krobot-673c6",
+    "storage_bucket": "krobot-673c6.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:713102723698:android:133f27afd04e1cabc0d0eb",
+        "android_client_info": {
+          "package_name": "com.gala.krobot"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAd3KCBx-ZLRpbCpYkF-xewZnr2dzUWkhQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

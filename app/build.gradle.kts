@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.googleServices)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.ksp)
     alias(libs.plugins.hiltAndroid)
@@ -47,9 +48,25 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+    signingConfigs {
+        create("release") {
+            storeFile = file("key.jks")
+            storePassword = "flat_alive"
+            keyAlias = "key0"
+            keyPassword = "flat_alive"
+        }
+        getByName("debug") {
+            storeFile = file("key.jks")
+            storePassword = "flat_alive"
+            keyAlias = "key0"
+            keyPassword = "flat_alive"
+        }
+    }
 }
 
 dependencies {
+    implementation(libs.firebaseBom)
+
     implementation(libs.androidxCoreKtx)
     implementation(libs.androidxLifecycleRuntimeKtx)
     implementation(libs.androidxActivityCompose)
@@ -60,6 +77,8 @@ dependencies {
     implementation(libs.androidxMaterial3)
     implementation(libs.androidxViewModelCompose)
     implementation(libs.hiltRuntime)
+//    implementation(libs.playServicesMlkitTextRecognition)
+    implementation(libs.firebaseMlVision)
     ksp(libs.hiltCompiler)
 
     implementation(project(":maze"))
