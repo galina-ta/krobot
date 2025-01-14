@@ -1,10 +1,10 @@
-package com.gala.krobot.platform
+package com.gala.krobot.internal.platform
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -34,7 +34,7 @@ class MainActivity : ComponentActivity() {
         setContent {
             KrobotTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Column(modifier = Modifier.padding(innerPadding)) {
+                    Box(modifier = Modifier.padding(innerPadding)) {
                         Maze()
                     }
                 }

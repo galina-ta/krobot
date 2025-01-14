@@ -5,6 +5,9 @@ import androidx.lifecycle.viewModelScope
 import com.gala.maze.common.BaseViewModel
 import com.gala.maze.common.arena.entity.RobotState
 import com.gala.maze.common.arena.entity.arena.Arena
+import com.gala.maze.common.program.ClipboardReceiver
+import com.gala.maze.common.program.ProgramParser
+import com.gala.maze.common.program.ProgramRobotController
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -12,8 +15,10 @@ import javax.inject.Inject
 @HiltViewModel
 class ArenaViewModel @Inject constructor(
     createRobotControllerHolder: CreateRobotControllerHolder,
-    executor: RobotExecutor,
+    private val executor: RobotExecutor,
     private val statesApplier: RobotStatesApplier,
+    private val clipboardReceiver: ClipboardReceiver,
+    private val programParser: ProgramParser,
 ) : BaseViewModel<ArenaViewState>(
     initialState = ArenaViewState(
         arena = null,
@@ -21,24 +26,33 @@ class ArenaViewModel @Inject constructor(
         isWon = false,
     ),
 ) {
-    private val statesApplierCallback: RobotStatesApplier.Callback =
-        object : RobotStatesApplier.Callback {
+    private val executorCallback = object : RobotExecutor.Callback {
 
-            override fun moveRobot(state: RobotState) {
-                updateState { copy(robotState = state) }
-            }
-
-            override fun onStateApplied(state: RobotState) {
-                robotController.onStateApplied(state)
-            }
+        override fun onWon() {
+            updateState { copy(isWon = true) }
         }
 
-    private val robotController: RobotController =
-        requireNotNull(createRobotControllerHolder.instance) {
-            "userAction must not be null"
-        }.invoke()
+        override fun onFailure(e: Exception) {
+            Log.e(TAG, "Robot destroyed", e)
+        }
+    }
 
-    init {
+    private fun execute(robotController: RobotController) {
+
+        val statesApplierCallback: RobotStatesApplier.Callback =
+            object : RobotStatesApplier.Callback {
+
+                override fun moveRobot(state: RobotState) {
+                    updateState { copy(robotState = state) }
+                    Thread.sleep(500)
+                    statesApplier.robotMoved()
+                }
+
+                override fun onStateApplied(state: RobotState) {
+                    robotController.onStateApplied(state)
+                }
+            }
+
         robotController.onArenaSet = { arena ->
             viewModelScope.launch {
                 updateState { copy(arena = arena) }
@@ -51,20 +65,6 @@ class ArenaViewModel @Inject constructor(
                 }
             })
         }
-    }
-
-    private val executorCallback = object : RobotExecutor.Callback {
-
-        override fun onWon() {
-            updateState { copy(isWon = true) }
-        }
-
-        override fun onFailure(e: Exception) {
-            Log.e(TAG, "Robot destroyed", e)
-        }
-    }
-
-    init {
         executor.execute(robotController, executorCallback, useCallback = { action ->
             viewModelScope.launch {
                 action()
@@ -72,8 +72,19 @@ class ArenaViewModel @Inject constructor(
         })
     }
 
-    fun robotMoved() {
-        statesApplier.robotMoved()
+    init {
+        val robotController = requireNotNull(createRobotControllerHolder.instance) {
+            "userAction must not be null"
+        }.invoke()
+
+        execute(robotController)
+    }
+
+    fun executeCopiedCodeClicked() {
+        val text = clipboardReceiver.get() ?: return
+        val commands = programParser.parse(text)
+        val controller = ProgramRobotController(commands)
+        execute(controller)
     }
 
     private companion object {

@@ -9,9 +9,9 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,7 +36,6 @@ import com.gala.maze.common.arena.entity.arena.Arena
 import com.gala.maze.common.arena.entity.arena.Asset
 import com.gala.maze.common.arena.entity.arena.Block
 import com.gala.maze.common.arena.entity.rp
-import kotlinx.coroutines.delay
 
 @Composable
 fun Maze() {
@@ -65,9 +64,17 @@ fun Maze() {
             Arena(
                 arena = state.arena,
                 robotState = state.robotState,
-                viewModel = viewModel,
                 pointSize = pointSize,
             )
+        }
+
+        Button(
+            modifier = Modifier.align(Alignment.BottomCenter),
+            onClick = {
+                viewModel.executeCopiedCodeClicked()
+            },
+        ) {
+            Text("Выполнить скопированный код")
         }
     }
 }
@@ -76,7 +83,6 @@ fun Maze() {
 private fun BoxScope.Arena(
     arena: Arena,
     robotState: RobotState,
-    viewModel: ArenaViewModel,
     pointSize: Float
 ) {
     Box(
@@ -90,18 +96,13 @@ private fun BoxScope.Arena(
         }
         Robot(
             state = robotState,
-            viewModel = viewModel,
             pointSize = pointSize,
         )
     }
 }
 
 @Composable
-private fun Robot(state: RobotState, viewModel: ArenaViewModel, pointSize: Float) {
-    LaunchedEffect(state.position) {
-        delay(500L)
-        viewModel.robotMoved()
-    }
+private fun Robot(state: RobotState, pointSize: Float) {
     Box(
         Modifier
             .size(state.size.render(pointSize))
