@@ -65,7 +65,9 @@ class ProgramParser @Inject constructor() {
         while (!wordsStack.isEmpty()) {
             val word = wordsStack.pop()
             when (word) {
-                CLOSE_BRACKET -> return when (name) {
+                OPEN_BRACKET -> Unit
+
+                else -> return when (name) {
                     MOVE_LEFT_NAME -> Command.Usage.Function.Move.Left(1)
                     MOVE_RIGHT_NAME -> Command.Usage.Function.Move.Right(1)
                     MOVE_UP_NAME -> Command.Usage.Function.Move.Up(1)
