@@ -67,15 +67,15 @@ fun Maze() {
                 pointSize = pointSize,
             )
         }
-
-        Button(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            onClick = {
-                viewModel.executeCopiedCodeClicked()
-            },
-        ) {
-            Text("Выполнить скопированный код")
-        }
+//
+//        Button(
+//            modifier = Modifier.align(Alignment.BottomCenter),
+//            onClick = {
+//                viewModel.executeCopiedCodeClicked()
+//            },
+//        ) {
+//            Text("Выполнить скопированный код")
+//        }
     }
 }
 

@@ -13,6 +13,15 @@ ppptp
 ppppp
 """.trim())
 
+val dogArena = parseArena("""
+ppppppp
+pptpp p
+p     p
+pp pp p
+pp pprp
+ppppppp
+""".trim())
+
 val arena1 = parseArena("""
 ppppppppp
 ppp   ppp
