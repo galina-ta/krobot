@@ -17,7 +17,6 @@ abstract class RobotController : RobotState.Source {
         this.arena = arena
         onArenaSet(arena)
         updateState(arena.initialRobotState)
-        delay(2000)
     }
 
     private lateinit var currentState: RobotState

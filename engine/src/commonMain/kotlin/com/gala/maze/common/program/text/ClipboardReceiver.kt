@@ -1,4 +1,4 @@
-package com.gala.maze.common.program
+package com.gala.maze.common.program.text
 
 interface ClipboardReceiver {
     fun get(): String?

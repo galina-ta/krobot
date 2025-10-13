@@ -48,7 +48,7 @@ kotlin {
         commonMain.dependencies {
             implementation(compose.ui)
             implementation(compose.material3)
-            implementation(projects.maze)
+            implementation(projects.engine)
         }
         androidMain.dependencies {
             implementation(libs.androidxCoreKtx)
@@ -56,6 +56,10 @@ kotlin {
             implementation(libs.androidxActivityCompose)
             implementation(libs.androidxUiToolingPreview)
             implementation(libs.androidxViewModelCompose)
+        }
+        wasmJsMain.dependencies {
+            implementation(libs.kotlinxBrowser)
+            implementation(libs.ktorClientCore)
         }
     }
 }

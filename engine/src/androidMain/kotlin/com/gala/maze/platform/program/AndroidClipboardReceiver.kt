@@ -2,7 +2,7 @@ package com.gala.maze.platform.program
 
 import android.content.ClipboardManager
 import android.content.Context
-import com.gala.maze.common.program.ClipboardReceiver
+import com.gala.maze.common.program.text.ClipboardReceiver
 
 class AndroidClipboardReceiver(
     private val context: Context,

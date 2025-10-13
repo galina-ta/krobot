@@ -25,4 +25,4 @@ dependencyResolutionManagement {
 }
 
 include(":app")
-include(":maze")
+include(":engine")

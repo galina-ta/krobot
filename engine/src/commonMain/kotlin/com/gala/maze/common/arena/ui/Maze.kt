@@ -32,17 +32,20 @@ import com.gala.maze.common.arena.entity.arena.Arena
 import com.gala.maze.common.arena.entity.arena.Asset
 import com.gala.maze.common.arena.entity.arena.Block
 import com.gala.maze.common.arena.entity.rp
-import krobot.maze.generated.resources.Res
-import krobot.maze.generated.resources.password_texture
-import krobot.maze.generated.resources.robot
-import krobot.maze.generated.resources.stone_texture
-import krobot.maze.generated.resources.target
-import krobot.maze.generated.resources.verify
+import krobot.engine.generated.resources.Res
+import krobot.engine.generated.resources.password_texture
+import krobot.engine.generated.resources.robot
+import krobot.engine.generated.resources.stone_texture
+import krobot.engine.generated.resources.target
+import krobot.engine.generated.resources.verify
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun Maze(viewModel: ArenaViewModel) {
+fun Maze(
+    viewModel: ArenaViewModel,
+    modifier: Modifier = Modifier,
+) {
     val state = viewModel.state
     var rootSize: Size.Real by remember { mutableStateOf(Size.Real(0.rp, 0.rp)) }
 

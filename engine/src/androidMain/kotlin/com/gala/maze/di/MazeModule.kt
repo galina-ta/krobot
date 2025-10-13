@@ -3,7 +3,7 @@ package com.gala.maze.di
 import com.gala.maze.common.arena.CreateRobotControllerHolder
 import com.gala.maze.common.arena.RobotExecutor
 import com.gala.maze.common.arena.RobotStatesApplier
-import com.gala.maze.common.program.ClipboardReceiver
+import com.gala.maze.common.program.text.ClipboardReceiver
 import com.gala.maze.platform.arena.AndroidRobotExecutor
 import com.gala.maze.platform.arena.AndroidRobotStatesApplier
 import com.gala.maze.platform.program.AndroidClipboardReceiver

@@ -14,7 +14,7 @@ import com.gala.krobot.ui.theme.KrobotTheme
 import com.gala.maze.common.arena.ArenaViewModel
 import com.gala.maze.common.arena.CreateRobotControllerHolder
 import com.gala.maze.common.arena.ui.Maze
-import com.gala.maze.common.program.ProgramParser
+import com.gala.maze.common.program.text.ProgramParser
 import com.gala.maze.platform.arena.AndroidRobotExecutor
 import com.gala.maze.platform.arena.AndroidRobotStatesApplier
 import kotlinx.coroutines.CoroutineScope

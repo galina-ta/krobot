@@ -1,18 +1,19 @@
-package com.gala.maze.common.program
+package com.gala.maze.common.program.text
 
-import com.gala.maze.common.program.models.Command
+import com.gala.maze.common.program.Program
+import com.gala.maze.common.program.models.Token
 
 class ProgramParser() {
 
-    fun parse(text: String): List<Command> {
+    fun parse(text: String): Program {
         val tokens = parseTokens(text)
         val wordsStack = WordsStack(initial = tokens)
         val commands = parseTopLevel(wordsStack)
-        return commands
+        return Program(commands)
     }
 
-    private fun parseTopLevel(wordsStack: WordsStack): List<Command.Definition> {
-        val commands = mutableListOf<Command.Definition>()
+    private fun parseTopLevel(wordsStack: WordsStack): List<Token.FunctionDefinition> {
+        val commands = mutableListOf<Token.FunctionDefinition>()
         while (!wordsStack.isEmpty()) {
             val word = wordsStack.pop()
             when (word) {
@@ -25,7 +26,7 @@ class ProgramParser() {
         return commands
     }
 
-    private fun parseFunctionDefinition(wordsStack: WordsStack): Command.Definition.Function {
+    private fun parseFunctionDefinition(wordsStack: WordsStack): Token.FunctionDefinition {
         val name = wordsStack.pop()
         while (!wordsStack.isEmpty()) {
             val word = wordsStack.pop()
@@ -33,9 +34,10 @@ class ProgramParser() {
                 OPEN_BRACKET -> Unit
                 CLOSE_BRACKET -> Unit
                 OPEN_BRACE -> {
-                    return Command.Definition.Function(
+                    return Token.FunctionDefinition(
+                        isMain = name == MAIN_NAME,
                         name = name,
-                        subcommands = parseFunctionBody(wordsStack)
+                        tokens = parseFunctionBody(wordsStack)
                     )
                 }
             }
@@ -43,45 +45,45 @@ class ProgramParser() {
         error("function is not ended")
     }
 
-    private fun parseFunctionBody(wordsStack: WordsStack): List<Command> {
-        val subcommands = mutableListOf<Command>()
+    private fun parseFunctionBody(wordsStack: WordsStack): List<Token.Usage> {
+        val tokens = mutableListOf<Token.Usage>()
         while (!wordsStack.isEmpty()) {
-            if (wordsStack.first() == FUN_KEYWORD) return subcommands
+            if (wordsStack.first() == FUN_KEYWORD) return tokens
             when (val word = wordsStack.pop()) {
                 OPEN_BRACE,
                 OPEN_BRACKET,
                 CLOSE_BRACKET -> error("wrong token $word")
 
-                CLOSE_BRACE -> return subcommands
+                CLOSE_BRACE -> return tokens
 
-                else -> subcommands.add(parseFunctionUsage(name = word, wordsStack = wordsStack))
+                else -> tokens.add(parseFunctionUsage(name = word, wordsStack = wordsStack))
             }
         }
-        return subcommands // In case if the final closing brace is missing
+        return tokens // In case if the final closing brace is missing
     }
 
-    private fun parseFunctionUsage(name: String, wordsStack: WordsStack): Command.Usage.Function {
+    private fun parseFunctionUsage(name: String, wordsStack: WordsStack): Token.Usage.Function {
         while (!wordsStack.isEmpty()) {
             val word = wordsStack.pop()
             when (word) {
                 OPEN_BRACKET -> Unit
 
                 else -> return when (name) {
-                    MOVE_LEFT_NAME -> Command.Usage.Function.Move.Left(1)
-                    MOVE_RIGHT_NAME -> Command.Usage.Function.Move.Right(1)
-                    MOVE_UP_NAME -> Command.Usage.Function.Move.Up(1)
-                    MOVE_DOWN_NAME -> Command.Usage.Function.Move.Down(1)
+                    MOVE_LEFT_NAME -> Token.Usage.Function.Move.Left(1)
+                    MOVE_RIGHT_NAME -> Token.Usage.Function.Move.Right(1)
+                    MOVE_UP_NAME -> Token.Usage.Function.Move.Up(1)
+                    MOVE_DOWN_NAME -> Token.Usage.Function.Move.Down(1)
 
                     SET_DEMO_ARENA ->
-                        Command.Usage.Function.SetArena.SetDemoArena
+                        Token.Usage.Function.SetArena("demo")
                     SET_ARENA_1 ->
-                        Command.Usage.Function.SetArena.SetArena1
+                        Token.Usage.Function.SetArena("arena1")
                     SET_HOMEWORK_1_VARIANT_1_ARENA ->
-                        Command.Usage.Function.SetArena.SetHomework1Variant1Arena
+                        Token.Usage.Function.SetArena("homework1Variant1Arena")
                     SET_HOMEWORK_1_VARIANT_2_ARENA ->
-                        Command.Usage.Function.SetArena.SetHomework1Variant2Arena
+                        Token.Usage.Function.SetArena("homework1Variant2Arena")
                     SET_HOMEWORK_1_VARIANT_3_ARENA ->
-                        Command.Usage.Function.SetArena.SetHomework1Variant3Arena
+                        Token.Usage.Function.SetArena("homework1Variant3Arena")
 
                     else -> error("")
                 }
@@ -110,7 +112,6 @@ class ProgramParser() {
                 }
                 if (stringBuilder.isNotEmpty()) {
                     newTokens.add(stringBuilder.toString())
-                    stringBuilder = StringBuilder()
                 }
                 newTokens
             }
@@ -125,6 +126,8 @@ class ProgramParser() {
     }
 
     private companion object {
+        private const val MAIN_NAME = "main"
+
         private const val FUN_KEYWORD = "fun"
         private const val OPEN_BRACKET = "("
         private const val CLOSE_BRACKET = ")"
