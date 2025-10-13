@@ -1,5 +1,6 @@
 package com.gala.krobot
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -66,7 +67,7 @@ fun main() {
                             parameters.remove(LEVEL_EDITOR_KEY)
                             parameters.append(LEVEL_KEY, levelDraw.toUrlLevel())
                         }
-                        window.open(url = robotUrl.buildString())
+                        window.open(url = robotUrl.buildString(), "_self")
                     }
                 )
             } else {
@@ -80,7 +81,7 @@ fun main() {
                                 parameters.append(LEVEL_KEY, levelDraw.toUrlLevel())
                             }
                         }
-                        window.open(url = editorUrl.buildString())
+                        window.open(url = editorUrl.buildString(), "_self")
                     },
                 )
             }
@@ -106,21 +107,23 @@ private fun Main(
             )
         }
         Column(modifier = Modifier.padding(innerPadding)) {
-            Button(
-                modifier = Modifier.padding(start = 6.dp, top = 6.dp),
-                onClick = {
-                    isCodeEditing = !isCodeEditing
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Button(
+                    modifier = Modifier.padding(start = 6.dp, top = 6.dp),
+                    onClick = {
+                        isCodeEditing = !isCodeEditing
+                    }
+                ) {
+                    Text(text = if (isCodeEditing) "Уровень" else "Код")
                 }
-            ) {
-                Text(text = if (isCodeEditing) "Уровень" else "Код")
-            }
-            Button(
-                modifier = Modifier
-                    .padding(start = 6.dp, top = 6.dp)
-                    .align(Alignment.End),
-                onClick = levelEditorRequested,
-            ) {
-                Text(text = "Редактор уровня")
+                Button(
+                    modifier = Modifier
+                        .padding(end = 6.dp, top = 6.dp)
+                        .align(Alignment.CenterEnd),
+                    onClick = levelEditorRequested,
+                ) {
+                    Text(text = "Редактор уровня")
+                }
             }
             if (isCodeEditing) {
                 VisualProgramEditor(

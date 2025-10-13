@@ -146,12 +146,13 @@ private fun Block(block: Block, pointSize: Float) {
         when (val asset = block.asset) {
             is Asset.Pass -> {
                 Box(
-                    modifier = Modifier.border(1.dp, color = Color.Black),
+                    modifier = Modifier.fillMaxSize().border(1.dp, color = Color.Black),
                 )
             }
             is Asset.Wall -> {
                 Box(
                     modifier = Modifier
+                        .fillMaxSize()
                         .border(1.dp, color = Color.Black)
                         .background(
                             Color(
