@@ -7,241 +7,241 @@ import com.gala.maze.common.arena.entity.arena.parseArena
 // @formatter:off
 
 val demoArena = parseArena("""
-ppppp
-prppp
-p  tp
-ppppp
+22222
+2s222
+2  f2
+22222
 """.trim())
 
 val dogArena = parseArena("""
-ppppppp
-pptpp p
-p     p
-pp pp p
-pp pprp
-ppppppp
+2222222
+22f22 2
+2     2
+22 22 2
+22 22s2
+2222222
 """.trim())
 
 val arena1 = parseArena("""
-ppppppppp
-ppp   ppp
-ppp p ppp
-p   p   p
-p ppppp p
-p     ptp
-ppp p ppp
-ppp p ppp
-ppr p  pp
+222222222
+222   222
+222 2 222
+2   2   2
+2 22222 2
+2     2f2
+222 2 222
+222 2 222
+22s 2  22
 """.trim())
 
 val arena2 = parseArena("""
-pppppppppp
-r        p
-pppppp ppp
-p   p  ppp
-p p   pppp
-p  pppp tp
-pp       p
-pppppppppp
+2222222222
+s        2
+222222 222
+2   2  222
+2 2   2222
+2  2222 f2
+22       2
+2222222222
 """.trim())
 
 val homework1DenisArena = parseArena("""
-ppppppppp
-ppp   ppp
-ppp p ppp
-p   p   p
-p ppppp p
-p     ptp
-ppp p ppp
-ppp p ppp
-ppr p  pp
+222222222
+222   222
+222 2 222
+2   2   2
+2 22222 2
+2     2f2
+222 2 222
+222 2 222
+22s 2  22
 """.trim())
 
 val homework1Variant1Arena = parseArena("""
-pppppppppppppppppp
-ppppp        ppppp
-pppp         ppppp
-p    ppppppp  pppp
-p    p     p  pppp
-ppr ppppppp tppppp
+222222222222222222
+22222        22222
+2222         22222
+2    2222222  2222
+2    2     2  2222
+22s 2222222 f22222
 """.trim())
 
 val homework1Variant2Arena = parseArena("""
-ppppppppppppppppppp
-ppp     pppp  pp tp
-pp  ppp  ppp  p  pp
-p  ppppp  pp    ppp
-p  ppppp        ppp
-pp  ppp  ppp  p  pp
-ppp rp  pppp  pp  p
-ppppppppppppppppppp
+2222222222222222222
+222     2222  22 f2
+22  222  222  2  22
+2  22222  22    222
+2  22222        222
+22  222  222  2  22
+222 s2  2222  22  2
+2222222222222222222
 """.trim())
 
 val homework1Variant3Arena = parseArena("""
-pppppppppppppppppppppppppp
-prppppppp            ppppp
-p   ppp   ppppppppp    ppp
-ppp  p  pppppppppppptp   p
-pppp   ppppppppppppppppp p
-ppp  p  pppppppppppppp   p
-p   ppp   pppppppppp   ppp
-p ppppppp            ppppp
-pppppppppppppppppppppppppp
+22222222222222222222222222
+2s2222222            22222
+2   222   222222222    222
+222  2  222222222222f2   2
+2222   22222222222222222 2
+222  2  22222222222222   2
+2   222   2222222222   222
+2 2222222            22222
+22222222222222222222222222
 """.trim())
 
 val arena3 = parseArena("""
-ppppp
-pr *p
-ppptp
-ppppp
+22222
+2s *2
+222f2
+22222
 """.trim())
 
 val homework2Variant1Arena = parseArena("""
-pppppppppppppppppp
-pppppp      pppppp
-pppp  pppppp  pppp
-ppp pppppppppp ppp
-ppp pppppppppp ppp
-pp pppppppppppp pp
-pp pppppppppppp pp
-p pppppppppppppp p
-p ppr   pp    pp p
-p p     pp     p p
-pp p   * pp   p pp
-ppp pppp  pppp ppp
-pppp pp   ppp pppp
-pppp pp*ppppp pppp
-pppp pp pp pp pppp
-pppppt       ppppp
-pppppppppppppppppp
+222222222222222222
+222222      222222
+2222  222222  2222
+222 2222222222 222
+222 2222222222 222
+22 222222222222 22
+22 222222222222 22
+2 22222222222222 2
+2 22s   22    22 2
+2 2     22     2 2
+22 2   * 22   2 22
+222 2222  2222 222
+2222 22   222 2222
+2222 22*22222 2222
+2222 22 22 22 2222
+22222f       22222
+222222222222222222
 """.trim())
 
 val arena4 = parseArena("""
-pppppppppp
-r        p
-pppppp*ppp
-p   p  ppp
-p*p   pppp
-p  pppp tp
-pp   *   p
-pppppppppp
+2222222222
+s        2
+222222*222
+2   2  222
+2*2   2222
+2  2222 f2
+22   *   2
+2222222222
 """.trim())
 
 val arena5 = parseArena("""
-ppppp
-pr #p
-ppptp
-ppppp
+22222
+2s #2
+222f2
+22222
 """.trim())
 
 val arena6 = parseArena("""
-pppppppppp
-r        p
-pppppp#ppp
-p   p  ppp
-p#p   pppp
-p  pppp tp
-pp   #   p
-pppppppppp
+2222222222
+s        2
+222222#222
+2   2  222
+2#2   2222
+2  2222 f2
+22   #   2
+2222222222
 """.trim())
 
 val homework3DenisArena = parseArena("""
-     pppppppppppppppppppp
-     p        p  p#       p
-     p   p         pp p   p pp
-pppppp       p    p  ppppppp  p
-p    p            p           p
- ppppp     p   p #   #     #   p
-     p#pp#   p   p       p   # p
-   pppr   p       p  ppppppp#tp
-  p   pppppppppppp ppppppppppp
-  pppp  pppp      pppp  pppp
+     22222222222222222222
+     2        2  2#       2
+     2   2         22 2   2 22
+222222       2    2  2222222  2
+2    2            2           2
+ 22222     2   2 #   #     #   2
+     2#22#   2   2       2   # 2
+   222s   2       2  2222222#f2
+  2   222222222222 22222222222
+  2222  2222      2222  2222
 """.trimIndent())
 
 val homework3EduardArena = parseArena("""
-pppp
-  rpp
-     p
-      p
-      p
-       p
-       ppp
- p###pp   p
- p    p    p
-p      p p p
-p      p   p
-p  p   pppp
- p    #    p
-  pppp     p
-     p  pppp
-     pp#    p
-    p        p
-   p         p
-  p           p
- p p         p
- p p#####pppp
- p       p
-  p    tp
+2222
+  s22
+     2
+      2
+      2
+       2
+       222
+ 2###22   2
+ 2    2    2
+2      2 2 2
+2      2   2
+2  2   2222
+ 2    #    2
+  2222     2
+     2  2222
+     22#    2
+    2        2
+   2         2
+  2           2
+ 2 2         2
+ 2 2#####2222
+ 2       2
+  2    f2
 """.trimIndent())
 
 val arena7 = parseArena("""
-ppppppppppp
-ptppppppprp
-p  ppppp  p
-pp  ppp  pp
-ppp  p  ppp
-p    p  c p
-p ppppppp p
-p#ppppppp p
-p pppppppvp
-pv #  c   p
-pp ppppp pp
-ppppppppppp
+22222222222
+2f2222222s2
+2  22222  2
+22  222  22
+222  2  222
+2    2  c 2
+2 2222222 2
+2#2222222 2
+2 2222222v2
+2v #  c   2
+22 22222 22
+22222222222
 """.trimIndent())
 
 val homework4EduardArena = parseArena("""
- ppppppppppp
-p    t     p
-pppppp     p         ppppppppppp
-     p     p        p           p
-     p#####p    pppp             p
-     p     #pppp                  ppp
-     p     # p                       pp
-     p     # p                        pp
-      pppppp v    c                   pp
-           pppp ppp                 pp p
-              p p pppppppppppvpppppp   p
-             p p  p p       p p    p   p
-             p p   p p      p p  p p   p
-            p p    p p     p  p  p  p     
-            p p    p p    p  c    prp
-           ppp      ppp   ppp     ppp
-           ppp      ppp   ppp     ppp
+ 22222222222
+2    f     2
+222222     2         22222222222
+     2     2        2           2
+     2#####2    2222             2
+     2     #2222                  222
+     2     # 2                       22
+     2     # 2                        22
+      222222 v    c                   22
+           2222 222                 22 2
+              2 2 22222222222v222222   2
+             2 2  2 2       2 2    2   2
+             2 2   2 2      2 2  2 2   2
+            2 2    2 2     2  2  2  2     
+            2 2    2 2    2  c    2s2
+           222      222   222     222
+           222      222   222     222
 """.trimIndent())
 
 val homework4DenisArena = parseArena("""
-             ppppppppppp
-   ppppp pppp           pppppp
- pp   vtpp  #                ppppp
-pp     vp p  #                   pp
- pp    ppp   #                    pp
-  p       pp #         p    ppppp p p
-  pp    pp#  #        p     v    p  pp
-    p  c   ppp p     p    pppp  cp  pp
-     ppp   p  p  p  p ppppp p pp p
-       pppp    p  p  p    p p  prp
-                pp pp     pp   pp
-               pppppp    ppp  ppp
+             22222222222
+   22222 2222           222222
+ 22   vf22  #                22222
+22     v2 2  #                   22
+ 22    222   #                    22
+  2       22 #         2    22222 2 2
+  22    22#  #        2     v    2  22
+    2  c   222 2     2    2222  c2  22
+     222   2  2  2  2 22222 2 22 2
+       2222    2  2  2    2 2  2s2
+                22 22     22   22
+               222222    222  222
 """.trimIndent())
 
 val arena8 = parseArena("""
-ppppppppp
-ppp%%%ppp
-ppp%p%ppp
-p%%%p%%%p
-p%ppppp%p
-p%%%  ptp
-ppp%p ppp
-ppp%p ppp
-ppr%p  pp
+222222222
+222%%%222
+222%2%222
+2%%%2%%%2
+2%22222%2
+2%%%  2f2
+222%2 222
+222%2 222
+22s%2  22
 """.trim())

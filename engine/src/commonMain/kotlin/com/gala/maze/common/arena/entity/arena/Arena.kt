@@ -103,7 +103,7 @@ fun parseArena(draw: String): Arena {
             when (char) {
                 's' -> initialRobotPosition = position
                 in '0'..'9' -> blocks.add(WallBlock(position, colorId = char.digitToInt()))
-                't' -> blocks.add(TargetBlock(position))
+                'f' -> blocks.add(TargetBlock(position))
                 '*' -> blocks.add(PasswordBlock(position))
                 '#' -> blocks.add(CheckKeyBlock(position))
                 '%' -> blocks.add(MaybeCheckKeyBlock(position))
