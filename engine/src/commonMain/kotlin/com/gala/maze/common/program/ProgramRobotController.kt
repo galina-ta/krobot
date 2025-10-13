@@ -16,16 +16,12 @@ class ProgramRobotController(
 ) : RobotController() {
 
     override suspend fun run() {
-        println("run $program")
         val mainFunction = program.tokens.first { it.isMain }
-        println("mainFunction=$mainFunction")
         executeFunction(mainFunction)
     }
 
     private suspend fun executeFunction(definition: Token.FunctionDefinition) {
-        println("executeFunction definition=$definition")
         definition.tokens.forEach { command ->
-            println("executeFunction command=$command")
             when (command) {
                 is Token.Usage.Function -> executeFunctionUsage(usage = command)
             }
@@ -33,7 +29,6 @@ class ProgramRobotController(
     }
 
     private suspend fun executeFunctionUsage(usage: Token.Usage.Function) {
-        println("executeFunctionUsage $usage")
         when (usage) {
             is Token.Usage.Function.Move.Left -> moveLeft(usage.stepsCount)
             is Token.Usage.Function.Move.Right -> moveRight(usage.stepsCount)
