@@ -65,7 +65,7 @@ fun main() {
                     compileClicked = { levelDraw ->
                         val robotUrl = URLBuilder(url).apply {
                             parameters.remove(LEVEL_EDITOR_KEY)
-                            parameters.append(LEVEL_KEY, levelDraw.toUrlLevel())
+                            parameters[LEVEL_KEY] = levelDraw.toUrlLevel()
                         }
                         window.open(url = robotUrl.buildString(), "_self")
                     }
@@ -78,7 +78,7 @@ fun main() {
                         val editorUrl = URLBuilder(url).apply {
                             parameters.append(LEVEL_EDITOR_KEY, "true")
                             if (levelDraw != null) {
-                                parameters.append(LEVEL_KEY, levelDraw.toUrlLevel())
+                                parameters[LEVEL_KEY] = levelDraw.toUrlLevel()
                             }
                         }
                         window.open(url = editorUrl.buildString(), "_self")
