@@ -79,8 +79,8 @@ data class Arena(
                 val currentPosition = Position(x = lineIndex.vp, y = rowIndex.vp)
                 when (val block = blocks.first { it.position == currentPosition }) {
                     is VoidBlock -> ' '
-                    is PlatformBlock -> 'p'
-                    is TargetBlock -> 't'
+                    is WallBlock -> block.toString().also { require(it.length == 1) }.first()
+                    is TargetBlock -> 'f'
                     else -> IllegalArgumentException("block can not be $block")
                 }
             }.joinToString(separator = "")
@@ -89,10 +89,10 @@ data class Arena(
 }
 
 /**
- * 'r': initial robot position
- * 'p': platform block
- * 't': target
- * ' ': void
+ * 's': initial robot position
+ * '0'..'9': wall blocks
+ * 'f': finish
+ * ' ': pass
  */
 fun parseArena(draw: String): Arena {
     var initialRobotPosition: Position? = null
@@ -101,8 +101,8 @@ fun parseArena(draw: String): Arena {
         line.forEachIndexed { charIndex, char ->
             val position = Position(x = charIndex.vp, y = lineIndex.vp)
             when (char) {
-                'r' -> initialRobotPosition = position
-                'p' -> blocks.add(PlatformBlock(position))
+                's' -> initialRobotPosition = position
+                in '0'..'9' -> blocks.add(WallBlock(position, colorId = char.digitToInt()))
                 't' -> blocks.add(TargetBlock(position))
                 '*' -> blocks.add(PasswordBlock(position))
                 '#' -> blocks.add(CheckKeyBlock(position))

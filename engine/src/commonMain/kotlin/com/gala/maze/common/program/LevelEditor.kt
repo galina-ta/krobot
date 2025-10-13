@@ -20,8 +20,11 @@ import krobot.engine.generated.resources.SpaceMono_Regular
 import org.jetbrains.compose.resources.Font
 
 @Composable
-fun LevelEditor(compileClicked: (String) -> Unit) {
-    var value by remember { mutableStateOf("") }
+fun LevelEditor(
+    defaultValue: String?,
+    compileClicked: (String) -> Unit,
+) {
+    var value: String by remember { mutableStateOf(defaultValue ?: "") }
     Column(
         modifier = Modifier.fillMaxSize()
     ) {

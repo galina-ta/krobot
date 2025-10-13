@@ -42,8 +42,8 @@ sealed class Block(
 }
 
 sealed class Asset {
-    object Void : Asset()
-    object Platform : Asset()
+    object Pass : Asset()
+    data class Wall(val colorId: Int) : Asset()
     object Target : Asset()
     object CheckKey : Asset()
     data class Password(val password: String) : Asset()
@@ -52,11 +52,11 @@ sealed class Asset {
 }
 
 class VoidBlock(position: Position) : Block(position) {
-    override val asset = Asset.Void
+    override val asset = Asset.Pass
 }
 
-class PlatformBlock(position: Position) : Block(position) {
-    override val asset = Asset.Platform
+class WallBlock(position: Position, colorId: Int) : Block(position) {
+    override val asset = Asset.Wall(colorId)
 
     override fun beforeRobotMove(robotState: RobotState): RobotState? {
         return if (robotState.position == position)
@@ -101,7 +101,7 @@ class MaybeCheckKeyBlock(position: Position) : CheckKeyBlock(position) {
     private val needCheck = Random.nextInt() % 5 == 0 // Шанс 1/5
 
     override val requiresKey = needCheck
-    override val asset: Asset = if (needCheck) Asset.CheckKey else Asset.Void
+    override val asset: Asset = if (needCheck) Asset.CheckKey else Asset.Pass
 
     override fun beforeRobotMove(robotState: RobotState): RobotState? {
         return if (needCheck)

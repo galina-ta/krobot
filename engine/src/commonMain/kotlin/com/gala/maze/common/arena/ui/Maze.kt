@@ -35,7 +35,6 @@ import com.gala.maze.common.arena.entity.rp
 import krobot.engine.generated.resources.Res
 import krobot.engine.generated.resources.password_texture
 import krobot.engine.generated.resources.robot
-import krobot.engine.generated.resources.stone_texture
 import krobot.engine.generated.resources.target
 import krobot.engine.generated.resources.verify
 import org.jetbrains.compose.resources.DrawableResource
@@ -145,13 +144,32 @@ private fun Block(block: Block, pointSize: Float) {
             ),
     ) {
         when (val asset = block.asset) {
-            is Asset.Void -> {
-                // Draw nothing
-            }
-            Asset.Platform -> {
-                ResourceImage(
+            is Asset.Pass -> {
+                Box(
                     modifier = Modifier.border(1.dp, color = Color.Black),
-                    resource = Res.drawable.stone_texture,
+                )
+            }
+            is Asset.Wall -> {
+                Box(
+                    modifier = Modifier
+                        .border(1.dp, color = Color.Black)
+                        .background(
+                            Color(
+                                when (val id = asset.colorId) {
+                                    0 -> 0xFF9E9E9E
+                                    1 -> 0xFF757575
+                                    2 -> 0xFF616161
+                                    3 -> 0xFF424242
+                                    4 -> 0xFF212121
+                                    5 -> 0xFFD7CCC8
+                                    6 -> 0xFFA1887F
+                                    7 -> 0xFF795548
+                                    8 -> 0xFF5D4037
+                                    9 -> 0xFF3E2723
+                                    else -> throw IllegalArgumentException("colorId can not be $id")
+                                }
+                            )
+                        ),
                 )
             }
             Asset.Target -> {

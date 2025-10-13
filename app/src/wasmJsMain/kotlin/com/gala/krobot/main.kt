@@ -12,17 +12,18 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ComposeViewport
 import com.gala.krobot.ui.theme.KrobotTheme
-import com.gala.maze.common.program.LevelEditor
 import com.gala.maze.common.arena.ArenaViewModel
 import com.gala.maze.common.arena.CreateRobotControllerHolder
 import com.gala.maze.common.arena.entity.arena.Arena
 import com.gala.maze.common.arena.entity.arena.parseArena
 import com.gala.maze.common.arena.ui.Maze
+import com.gala.maze.common.program.LevelEditor
 import com.gala.maze.common.program.Program
 import com.gala.maze.common.program.ProgramRobotController
 import com.gala.maze.common.program.visual.VisualProgramEditorViewModel
@@ -46,37 +47,53 @@ fun main() {
 //    globalRobotController = robotController
 //    createRobotControllerHolder.instance = { robotController }
 
-    val url = parseUrl(document.URL)
-    val levelName = url?.parameters?.get(LEVEL_NAME_KEY) ?: "пробный"
-    val level = url?.parameters?.get(LEVEL_KEY)
-        ?.replace('|', '\n')
+    val url = parseUrl(document.URL)!!
+    val levelName = url.parameters[LEVEL_NAME_KEY] ?: "пробный"
+    val levelDraw = url.parameters[LEVEL_KEY]?.toLevelDraw()
+    val level = levelDraw
         ?.let { parseArena(it) }
         ?: demoArena
 
-    val isLevelEditor = url?.parameters?.get(LEVEL_EDITOR_KEY) != null
+    val isLevelEditor = url.parameters[LEVEL_EDITOR_KEY] != null
 
     ComposeViewport {
         KrobotTheme {
             if (isLevelEditor) {
                 LevelEditor(
-                    compileClicked = { levelString ->
+                    defaultValue = levelDraw ?: "",
+                    compileClicked = { levelDraw ->
                         val robotUrl = URLBuilder(url).apply {
-                            fragment = ""
                             parameters.remove(LEVEL_EDITOR_KEY)
-                            parameters.append(LEVEL_KEY, levelString.replace("\n", "|"))
+                            parameters.append(LEVEL_KEY, levelDraw.toUrlLevel())
                         }
-                        window.open(url = robotUrl.buildString(), target = "_blank")
+                        window.open(url = robotUrl.buildString())
                     }
                 )
             } else {
-                Main(levelName, level)
+                Main(
+                    levelName,
+                    level,
+                    levelEditorRequested = {
+                        val editorUrl = URLBuilder(url).apply {
+                            parameters.append(LEVEL_EDITOR_KEY, "true")
+                            if (levelDraw != null) {
+                                parameters.append(LEVEL_KEY, levelDraw.toUrlLevel())
+                            }
+                        }
+                        window.open(url = editorUrl.buildString())
+                    },
+                )
             }
         }
     }
 }
 
 @Composable
-private fun Main(levelName: String, level: Arena) {
+private fun Main(
+    levelName: String,
+    level: Arena,
+    levelEditorRequested: () -> Unit,
+) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
         var isCodeEditing by remember { mutableStateOf(false) }
         var program: Program by remember { mutableStateOf(Program.setLevel(levelName)) }
@@ -96,6 +113,14 @@ private fun Main(levelName: String, level: Arena) {
                 }
             ) {
                 Text(text = if (isCodeEditing) "Уровень" else "Код")
+            }
+            Button(
+                modifier = Modifier
+                    .padding(start = 6.dp, top = 6.dp)
+                    .align(Alignment.End),
+                onClick = levelEditorRequested,
+            ) {
+                Text(text = "Редактор уровня")
             }
             if (isCodeEditing) {
                 VisualProgramEditor(
@@ -128,6 +153,12 @@ private fun Main(levelName: String, level: Arena) {
         }
     }
 }
+
+private fun String.toUrlLevel(): String =
+    replace('\n', '|')
+
+private fun String.toLevelDraw(): String =
+    replace('|', '\n')
 
 private const val LEVEL_EDITOR_KEY = "levelEditor"
 private const val LEVEL_KEY = "level"
