@@ -10,13 +10,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
@@ -38,7 +39,7 @@ fun VisualProgramEditor(
     val state = viewModel.state
     Column(modifier = modifier.background(Color.White)) {
         LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
-            items(state.program.flatLines) { line ->
+            itemsIndexed(state.program.flatLines) { index, line ->
                 Row(
                     modifier = Modifier
                         .then(
@@ -56,6 +57,12 @@ fun VisualProgramEditor(
                                 Modifier
                         )
                 ) {
+                    Text(
+                        modifier = Modifier
+                            .padding(horizontal = 6.dp)
+                            .align(Alignment.CenterVertically),
+                        text = "${index + 1}"
+                    )
                     line.symbols.forEach { symbol ->
                         Symbol(
                             symbol = symbol,

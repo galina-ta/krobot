@@ -3,11 +3,6 @@ package com.gala.maze.common.program.visual.model
 import androidx.compose.runtime.Immutable
 import com.gala.maze.common.program.Program
 import com.gala.maze.common.program.models.Token
-import com.gala.maze.common.program.models.Token.Usage.Function.Move.Down
-import com.gala.maze.common.program.models.Token.Usage.Function.Move.Left
-import com.gala.maze.common.program.models.Token.Usage.Function.Move.Right
-import com.gala.maze.common.program.models.Token.Usage.Function.Move.Up
-import com.gala.maze.common.program.models.Token.Usage.Function.SetArena
 
 @Immutable
 data class VisualProgram(
@@ -61,30 +56,7 @@ data class VisualProgram(
     }
 
     private fun withNewFunction(): VisualProgram {
-        val newDefinition = FunctionDefinition(
-            name = Symbol.Identifier.Undefined,
-            isSelected = true,
-            lines = listOf(
-                Line(
-                    isSelectable = true,
-                    isSelected = true,
-                    functionDefinitionIndex = functionDefinitions.size,
-                    symbols = listOf(
-                        Symbol.Definition.Function,
-                        Symbol.Identifier.Undefined,
-                        Symbol.Brace.Curly.Open,
-                    ),
-                ),
-                Line(
-                    isSelectable = false,
-                    isSelected = false,
-                    functionDefinitionIndex = functionDefinitions.size,
-                    symbols = listOf(
-                        Symbol.Brace.Curly.Close,
-                    ),
-                ),
-            ),
-        )
+        val newDefinition = FunctionDefinition(isSelected = true, index = functionDefinitions.size)
         val definitions = functionDefinitions.map { it.unselected() } + newDefinition
         return copy(functionDefinitions = definitions)
     }
@@ -200,26 +172,42 @@ data class VisualProgram(
 
     fun toProgram(levelName: String): Program = Program(
         tokens = functionDefinitions.map { definition ->
-            val identifier = definition.lines.first()
-                .symbols.filterIsInstance<Symbol.Identifier>()
-                .first()
+            val identifier = definition.name
             Token.FunctionDefinition(
                 name = identifier.name,
                 isMain = identifier == Symbol.Identifier.Run,
                 tokens = definition.lines.drop(1).flatMap { line ->
                     line.symbols.flatMap { symbol ->
                         when (symbol) {
+                            Symbol.Usage.Move.Down -> listOf(
+                                Token.Usage.Function.Move.Down(1)
+                            )
+
+                            Symbol.Usage.Move.Left -> listOf(
+                                Token.Usage.Function.Move.Left(1)
+                            )
+
+                            Symbol.Usage.Move.Right -> listOf(
+                                Token.Usage.Function.Move.Right(1)
+                            )
+
+                            Symbol.Usage.Move.Up -> listOf(
+                                Token.Usage.Function.Move.Up(1)
+                            )
+
+                            Symbol.Usage.SetLevel -> listOf(
+                                Token.Usage.Function.SetArena(levelName)
+                            )
+
+                            is Symbol.Usage.Function -> listOf(
+                                Token.Usage.Function.DefinedFunction(symbol.identifier.name)
+                            )
+
                             is Symbol.Brace.Curly,
                             is Symbol.Definition.Function,
                             is Symbol.Identifier,
                             Symbol.Remove,
                             Symbol.Space -> emptyList()
-                            Symbol.Usage.Move.Down -> listOf(Down(1))
-                            Symbol.Usage.Move.Left -> listOf(Left(1))
-                            Symbol.Usage.Move.Right -> listOf(Right(1))
-                            Symbol.Usage.Move.Up -> listOf(Up(1))
-                            Symbol.Usage.SetLevel -> listOf(SetArena(levelName))
-                            is Symbol.Usage.Function -> listOf()
                         }
                     }
                 }
@@ -228,10 +216,36 @@ data class VisualProgram(
     )
 
     data class FunctionDefinition(
-        val name: Symbol.Identifier,
         val isSelected: Boolean,
         val lines: List<Line>,
     ) {
+        constructor(isSelected: Boolean, index: Int) : this(
+            isSelected = isSelected,
+            lines = listOf(
+                Line(
+                    isSelectable = true,
+                    isSelected = true,
+                    functionDefinitionIndex = index,
+                    symbols = listOf(
+                        Symbol.Definition.Function,
+                        Symbol.Identifier.Undefined,
+                        Symbol.Brace.Curly.Open,
+                    ),
+                ),
+                Line(
+                    isSelectable = false,
+                    isSelected = false,
+                    functionDefinitionIndex = index,
+                    symbols = listOf(
+                        Symbol.Brace.Curly.Close,
+                    ),
+                ),
+            ),
+        )
+
+        val name = lines.first { it.isFunctionDefinition }
+            .symbols.filterIsInstance<Symbol.Identifier>().first()
+
         fun selectedLine(): Line? =
             lines.find { it.isSelected }
 
@@ -281,13 +295,9 @@ data class VisualProgram(
             fun usages(
                 functionDefinitions: List<FunctionDefinition>,
             ) = ActionSet(
-                actions = Symbol.Usage.all().map { usage ->
+                actions = Symbol.Usage.allExceptRun(functionDefinitions).map { usage ->
                     Action.AddUsage(usage = usage)
-                } + functionDefinitions
-                    .filter { it.name != Symbol.Identifier.Run }
-                    .map {
-                        Action.AddUsage(usage = Symbol.Usage.Function(identifier = it.name))
-                    }
+                }
             )
 
             fun topLevel(canRemove: Boolean): ActionSet =
@@ -331,10 +341,22 @@ data class VisualProgram(
             data class Function(val identifier: Identifier) : Usage
 
             companion object {
-                fun all(): List<Usage> = listOf(
+
+                fun allExceptRun(definitions: List<FunctionDefinition>): List<Usage> =
+                    allStatic() + allNonRunFunctions(definitions)
+
+                private fun allStatic(): List<Usage> = listOf(
                     *Move.all().toTypedArray(),
                     SetLevel,
                 )
+
+                private fun allNonRunFunctions(definitions: List<FunctionDefinition>): List<Usage> {
+                    val defs = definitions
+                        .filter { it.name != Identifier.Run }
+                        .map { Function(identifier = it.name) }
+                    println(defs)
+                    return defs
+                }
             }
         }
 
