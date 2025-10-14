@@ -6,6 +6,8 @@ sealed interface Token {
 
         sealed interface Function : Usage {
 
+            data class DefinedFunction(val name: String) : Function
+
             data class SetArena(val name: String) : Function
 
             sealed interface Move : Function {

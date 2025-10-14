@@ -47,6 +47,10 @@ class ProgramRobotController(
                     }
                 )
             }
+            is Token.Usage.Function.DefinedFunction -> {
+                val function = program.tokens.first { it.name == usage.name }
+                executeFunction(function)
+            }
         }
     }
 }

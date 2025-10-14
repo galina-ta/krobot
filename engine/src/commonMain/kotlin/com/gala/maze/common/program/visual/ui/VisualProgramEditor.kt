@@ -193,6 +193,7 @@ private fun RowScope.Symbol(
             is VisualProgram.Symbol.Identifier -> symbol.name
             VisualProgram.Symbol.Space -> ""
             VisualProgram.Symbol.Remove -> "rm"
+            is VisualProgram.Symbol.Usage.Function -> symbol.identifier.name
         },
         fontWeight = if (isDefinition) FontWeight.Bold else null,
         color = if (isDefinition) Color.Red else Color.Black,

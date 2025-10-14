@@ -3,6 +3,11 @@ package com.gala.maze.common.program.visual.model
 import androidx.compose.runtime.Immutable
 import com.gala.maze.common.program.Program
 import com.gala.maze.common.program.models.Token
+import com.gala.maze.common.program.models.Token.Usage.Function.Move.Down
+import com.gala.maze.common.program.models.Token.Usage.Function.Move.Left
+import com.gala.maze.common.program.models.Token.Usage.Function.Move.Right
+import com.gala.maze.common.program.models.Token.Usage.Function.Move.Up
+import com.gala.maze.common.program.models.Token.Usage.Function.SetArena
 
 @Immutable
 data class VisualProgram(
@@ -20,11 +25,11 @@ data class VisualProgram(
             selectedLine.isFunctionDefinition -> listOf(
                 ActionSet.topLevel(canRemove = true),
                 ActionSet.functionIdentifiers,
-                ActionSet.usages,
+                ActionSet.usages(functionDefinitions),
             )
             else -> listOf(
                 ActionSet.topLevel(canRemove = true),
-                ActionSet.usages,
+                ActionSet.usages(functionDefinitions),
             )
         }
     }
@@ -209,11 +214,12 @@ data class VisualProgram(
                             is Symbol.Identifier,
                             Symbol.Remove,
                             Symbol.Space -> emptyList()
-                            Symbol.Usage.Move.Down -> listOf(Token.Usage.Function.Move.Down(1))
-                            Symbol.Usage.Move.Left -> listOf(Token.Usage.Function.Move.Left(1))
-                            Symbol.Usage.Move.Right -> listOf(Token.Usage.Function.Move.Right(1))
-                            Symbol.Usage.Move.Up -> listOf(Token.Usage.Function.Move.Up(1))
-                            Symbol.Usage.SetLevel -> listOf(Token.Usage.Function.SetArena(levelName))
+                            Symbol.Usage.Move.Down -> listOf(Down(1))
+                            Symbol.Usage.Move.Left -> listOf(Left(1))
+                            Symbol.Usage.Move.Right -> listOf(Right(1))
+                            Symbol.Usage.Move.Up -> listOf(Up(1))
+                            Symbol.Usage.SetLevel -> listOf(SetArena(levelName))
+                            is Symbol.Usage.Function -> listOf()
                         }
                     }
                 }
@@ -272,10 +278,16 @@ data class VisualProgram(
                 }
             )
 
-            val usages = ActionSet(
+            fun usages(
+                functionDefinitions: List<FunctionDefinition>,
+            ) = ActionSet(
                 actions = Symbol.Usage.all().map { usage ->
                     Action.AddUsage(usage = usage)
-                }
+                } + functionDefinitions
+                    .filter { it.name != Symbol.Identifier.Run }
+                    .map {
+                        Action.AddUsage(usage = Symbol.Usage.Function(identifier = it.name))
+                    }
             )
 
             fun topLevel(canRemove: Boolean): ActionSet =
@@ -315,6 +327,8 @@ data class VisualProgram(
             }
 
             data object SetLevel : Usage
+
+            data class Function(val identifier: Identifier) : Usage
 
             companion object {
                 fun all(): List<Usage> = listOf(
