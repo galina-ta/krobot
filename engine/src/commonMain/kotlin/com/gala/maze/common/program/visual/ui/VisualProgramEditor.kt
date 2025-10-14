@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.boundsInParent
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
@@ -61,6 +62,8 @@ fun VisualProgramEditor(
                         modifier = Modifier
                             .padding(horizontal = 6.dp)
                             .align(Alignment.CenterVertically),
+                        color = Color(0xFF1565C0),
+                        fontStyle = FontStyle.Italic,
                         text = "${index + 1}"
                     )
                     line.symbols.forEach { symbol ->
