@@ -22,7 +22,7 @@ data class Program(
                 Token.FunctionDefinition(
                     name = "",
                     parameterName = null,
-                    statements = listOf(Token.Statement.FunctionCall.SetArena(name = levelName)),
+                    statements = listOf(Token.Statement.FunctionCall.SetLevel(name = levelName)),
                     isMain = true,
                 )
             )

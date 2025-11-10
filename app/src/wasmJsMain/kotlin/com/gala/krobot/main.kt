@@ -18,11 +18,11 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ComposeViewport
-import com.gala.krobot.engine.common.arena.ArenaViewModel
+import com.gala.krobot.engine.common.arena.LevelViewModel
 import com.gala.krobot.engine.common.arena.CreateRobotControllerHolder
-import com.gala.krobot.engine.common.arena.entity.arena.Arena
-import com.gala.krobot.engine.common.arena.entity.arena.parseArena
-import com.gala.krobot.engine.common.arena.ui.Maze
+import com.gala.krobot.engine.common.arena.entity.arena.Level
+import com.gala.krobot.engine.common.arena.entity.arena.parseLevel
+import com.gala.krobot.engine.common.arena.ui.LevelScreen
 import com.gala.krobot.engine.common.program.LevelEditor
 import com.gala.krobot.engine.common.program.Program
 import com.gala.krobot.engine.common.program.ProgramRobotController
@@ -30,7 +30,7 @@ import com.gala.krobot.engine.common.program.visual.VisualProgramEditorViewModel
 import com.gala.krobot.engine.common.program.visual.ui.VisualProgramEditor
 import com.gala.krobot.engine.impls.RobotExecutorImpl
 import com.gala.krobot.engine.impls.RobotStatesApplierImpl
-import com.gala.krobot.engine.levels.demoArena
+import com.gala.krobot.engine.levels.demoLevel
 import com.gala.krobot.ui.theme.KrobotTheme
 import io.ktor.http.URLBuilder
 import io.ktor.http.parseUrl
@@ -52,8 +52,8 @@ fun main() {
     val levelName = url.parameters[LEVEL_NAME_KEY] ?: "пробный"
     val levelDraw = url.parameters[LEVEL_KEY]?.toLevelDraw()
     val level = levelDraw
-        ?.let { parseArena(it) }
-        ?: demoArena
+        ?.let { parseLevel(it) }
+        ?: demoLevel
 
     val isLevelEditor = url.parameters[LEVEL_EDITOR_KEY] != null
 
@@ -92,7 +92,7 @@ fun main() {
 @Composable
 private fun Main(
     levelName: String,
-    level: Arena,
+    level: Level,
     levelEditorRequested: () -> Unit,
 ) {
     Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
@@ -139,15 +139,14 @@ private fun Main(
                         dynamicLevel = level,
                     )
                     createRobotControllerHolder.instance = { controller }
-                    ArenaViewModel(
+                    LevelViewModel(
                         createRobotControllerHolder = createRobotControllerHolder,
                         executor = RobotExecutorImpl(),
                         statesApplier = RobotStatesApplierImpl(),
                         scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
                     )
                 }
-                Maze(
-                    modifier = Modifier.fillMaxWidth().weight(1f),
+                LevelScreen(
                     viewModel = levelViewModel,
                 )
             }

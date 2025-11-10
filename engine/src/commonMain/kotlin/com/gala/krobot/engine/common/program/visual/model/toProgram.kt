@@ -35,7 +35,7 @@ fun VisualProgram.toProgram(levelName: String): Program = Program(
                     }
 
                     VisualSymbol.Statement.FunctionCall.SetLevel ->
-                        Token.Statement.FunctionCall.SetArena(levelName)
+                        Token.Statement.FunctionCall.SetLevel(levelName)
 
                     is VisualSymbol.Statement.FunctionCall.User -> {
                         val expressionSymbol = line.parameterSymbol<VisualSymbol.Expression>()

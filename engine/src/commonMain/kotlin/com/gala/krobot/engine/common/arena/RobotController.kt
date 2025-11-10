@@ -3,19 +3,19 @@ package com.gala.krobot.engine.common.arena
 import com.gala.krobot.engine.common.arena.entity.Position
 import com.gala.krobot.engine.common.arena.entity.RobotException
 import com.gala.krobot.engine.common.arena.entity.RobotState
-import com.gala.krobot.engine.common.arena.entity.arena.Arena
+import com.gala.krobot.engine.common.arena.entity.arena.Level
 import com.gala.krobot.engine.common.arena.entity.arena.RandomCodeBlock
 
 abstract class RobotController : RobotState.Source {
-    var onArenaSet: (Arena) -> Unit = {}
+    var onLevelSet: (Level) -> Unit = {}
     lateinit var applyStates: suspend (List<RobotState>) -> Unit
 
-    private lateinit var arena: Arena
+    private lateinit var level: Level
 
-    suspend fun setArena(arena: Arena) {
-        this.arena = arena
-        onArenaSet(arena)
-        updateState(arena.initialRobotState)
+    suspend fun setLevel(level: Level) {
+        this.level = level
+        onLevelSet(level)
+        updateState(level.initialRobotState)
     }
 
     private lateinit var currentState: RobotState
@@ -55,11 +55,11 @@ abstract class RobotController : RobotState.Source {
 
     fun needKey(direction: Position.Direction): Boolean {
         val nextPosition = currentState.position.moved(direction)
-        return arena.blockOn(nextPosition)?.requiresKey == true
+        return level.blockOn(nextPosition)?.requiresKey == true
     }
 
     fun currentCode(): Int {
-        val block = arena.blockOn(currentState.position)
+        val block = level.blockOn(currentState.position)
         require(block is RandomCodeBlock) { "Robot is not on a CodeBlock now" }
         return block.randomCode
     }
@@ -113,7 +113,7 @@ abstract class RobotController : RobotState.Source {
 
         val list = mutableListOf<RobotState>()
 
-        val beforeState = arena.beforeRobotMove(robotState = state).takeIf { it != state }
+        val beforeState = level.beforeRobotMove(robotState = state).takeIf { it != state }
         if (beforeState != null) {
             val beforeStates = makeStatesList(beforeState)
             list.addAll(beforeStates)
@@ -121,7 +121,7 @@ abstract class RobotController : RobotState.Source {
 
         list.add(state)
 
-        val afterState = arena.afterRobotMove(robotState = state).takeIf { it != state }
+        val afterState = level.afterRobotMove(robotState = state).takeIf { it != state }
         if (afterState != null) {
             val afterStates = makeStatesList(afterState)
             list.addAll(afterStates)

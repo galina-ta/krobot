@@ -5,7 +5,7 @@ import com.gala.krobot.engine.common.arena.entity.RobotState
 import com.gala.krobot.engine.common.arena.entity.Size
 import com.gala.krobot.engine.common.arena.entity.vp
 
-data class Arena(
+data class Level(
     val initialRobotState: RobotState,
     private val nonVoidBlocks: List<Block>,
 ) : RobotStateMutationsProvider, RobotState.Source {
@@ -94,7 +94,7 @@ data class Arena(
  * 'f': finish
  * ' ': pass
  */
-fun parseArena(draw: String): Arena {
+fun parseLevel(draw: String): Level {
     var initialRobotPosition: Position? = null
     val blocks = mutableListOf<Block>()
     draw.lines().forEachIndexed { lineIndex, line ->
@@ -114,7 +114,7 @@ fun parseArena(draw: String): Arena {
             }
         }
     }
-    return Arena(
+    return Level(
         initialRobotState = RobotState(
             position = initialRobotPosition ?: throw IllegalArgumentException("no 'r' in draw")
         ),

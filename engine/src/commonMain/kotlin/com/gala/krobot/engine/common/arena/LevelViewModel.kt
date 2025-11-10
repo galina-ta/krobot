@@ -2,19 +2,19 @@ package com.gala.krobot.engine.common.arena
 
 import com.gala.krobot.engine.common.BaseViewModel
 import com.gala.krobot.engine.common.arena.entity.RobotState
-import com.gala.krobot.engine.common.arena.entity.arena.Arena
+import com.gala.krobot.engine.common.arena.entity.arena.Level
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class ArenaViewModel(
+class LevelViewModel(
     createRobotControllerHolder: CreateRobotControllerHolder,
     private val executor: RobotExecutor,
     private val statesApplier: RobotStatesApplier,
     private val scope: CoroutineScope,
-) : BaseViewModel<ArenaViewState>(
-    initialState = ArenaViewState(
-        arena = null,
+) : BaseViewModel<LevelViewState>(
+    initialState = LevelViewState(
+        level = null,
         robotState = null,
         movesRight = true,
         isWon = false,
@@ -59,8 +59,8 @@ class ArenaViewModel(
                 }
             }
 
-        robotController.onArenaSet = { arena ->
-            updateState { copy(arena = arena) }
+        robotController.onLevelSet = { arena ->
+            updateState { copy(level = arena) }
         }
         robotController.applyStates = { states ->
             statesApplier.applyStates(states, statesApplierCallback)
@@ -80,8 +80,8 @@ class ArenaViewModel(
     }
 }
 
-data class ArenaViewState(
-    val arena: Arena?,
+data class LevelViewState(
+    val level: Level?,
     val robotState: RobotState?,
     val movesRight: Boolean,
     val isWon: Boolean,

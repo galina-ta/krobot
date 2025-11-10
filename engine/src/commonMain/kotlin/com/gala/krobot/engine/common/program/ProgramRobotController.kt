@@ -1,19 +1,15 @@
 package com.gala.krobot.engine.common.program
 
 import com.gala.krobot.engine.common.arena.RobotController
-import com.gala.krobot.engine.common.arena.entity.arena.Arena
+import com.gala.krobot.engine.common.arena.entity.arena.Level
 import com.gala.krobot.engine.common.program.models.Token
-import com.gala.krobot.engine.levels.arena1
-import com.gala.krobot.engine.levels.demoArena
-import com.gala.krobot.engine.levels.homework1Variant1Arena
-import com.gala.krobot.engine.levels.homework1Variant2Arena
-import com.gala.krobot.engine.levels.homework1Variant3Arena
+import com.gala.krobot.engine.levels.allLevels
 import kotlin.jvm.JvmInline
 
 class ProgramRobotController(
     private val program: Program,
     private val dynamicLevelName: String,
-    private val dynamicLevel: Arena,
+    private val dynamicLevel: Level,
 ) : RobotController() {
 
     override suspend fun run() {
@@ -77,16 +73,12 @@ class ProgramRobotController(
                 }
             }
 
-            is Token.Statement.FunctionCall.SetArena -> {
-                setArena(
+            is Token.Statement.FunctionCall.SetLevel -> {
+                setLevel(
                     when (call.name) {
-                        "demoArena" -> demoArena
-                        "arena1" -> arena1
-                        "homework1Variant1Arena" -> homework1Variant1Arena
-                        "homework1Variant2Arena" -> homework1Variant2Arena
-                        "homework1Variant3Arena" -> homework1Variant3Arena
+                        in allLevels -> allLevels[call.name]!!
                         dynamicLevelName -> dynamicLevel
-                        else -> throw IllegalArgumentException("arena ${call.name} is not registered")
+                        else -> throw IllegalArgumentException("level ${call.name} is not registered")
                     }
                 )
             }

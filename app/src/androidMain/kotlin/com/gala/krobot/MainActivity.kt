@@ -11,9 +11,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.gala.krobot.global.globalRobotController
 import com.gala.krobot.ui.theme.KrobotTheme
-import com.gala.krobot.engine.common.arena.ArenaViewModel
+import com.gala.krobot.engine.common.arena.LevelViewModel
 import com.gala.krobot.engine.common.arena.CreateRobotControllerHolder
-import com.gala.krobot.engine.common.arena.ui.Maze
+import com.gala.krobot.engine.common.arena.ui.LevelScreen
 import com.gala.krobot.engine.impls.RobotExecutorImpl
 import com.gala.krobot.engine.impls.RobotStatesApplierImpl
 import kotlinx.coroutines.CoroutineScope
@@ -31,7 +31,7 @@ class MainActivity : ComponentActivity() {
         globalRobotController = robotController
         createRobotControllerHolder.instance = { robotController }
 
-        val viewModel = ArenaViewModel(
+        val viewModel = LevelViewModel(
             createRobotControllerHolder = createRobotControllerHolder,
             executor = RobotExecutorImpl(),
             statesApplier = RobotStatesApplierImpl(),
@@ -43,7 +43,7 @@ class MainActivity : ComponentActivity() {
             KrobotTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
-                        Maze(viewModel)
+                        LevelScreen(viewModel)
                     }
                 }
             }

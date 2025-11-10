@@ -14,7 +14,7 @@ sealed interface Token {
                 val parameter: Expression?,
             ) : FunctionCall, Expression
 
-            data class SetArena(val name: String) : FunctionCall
+            data class SetLevel(val name: String) : FunctionCall
 
             data class Use(val what: Expression?) : FunctionCall
 

@@ -1,37 +1,37 @@
 package com.gala.krobot.global
 
 import com.gala.krobot.engine.common.arena.RobotController
-import com.gala.krobot.engine.common.arena.entity.arena.Arena
-import com.gala.krobot.engine.levels.arena1
-import com.gala.krobot.engine.levels.demoArena
-import com.gala.krobot.engine.levels.homework1Variant1Arena
-import com.gala.krobot.engine.levels.homework1Variant2Arena
-import com.gala.krobot.engine.levels.homework1Variant3Arena
+import com.gala.krobot.engine.common.arena.entity.arena.Level
+import com.gala.krobot.engine.levels.level1
+import com.gala.krobot.engine.levels.demoLevel
+import com.gala.krobot.engine.levels.homework1Variant1Level
+import com.gala.krobot.engine.levels.homework1Variant2Level
+import com.gala.krobot.engine.levels.homework1Variant3Level
 
 lateinit var globalRobotController: RobotController
 
-suspend fun setArena(arena: Arena) {
-    globalRobotController.setArena(arena)
+suspend fun setLevel(level: Level) {
+    globalRobotController.setLevel(level)
 }
 
-suspend fun setDemoArena() {
-    setArena(arena = demoArena)
+suspend fun setDemoLevel() {
+    setLevel(level = demoLevel)
 }
 
-suspend fun setArena1() {
-    setArena(arena = arena1)
+suspend fun setLevel1() {
+    setLevel(level = level1)
 }
 
-suspend fun setHomework1Variant1Arena() {
-    setArena(arena = homework1Variant1Arena)
+suspend fun setHomework1Variant1Level() {
+    setLevel(level = homework1Variant1Level)
 }
 
-suspend fun setHomework1Variant2Arena() {
-    setArena(arena = homework1Variant2Arena)
+suspend fun setHomework1Variant2Level() {
+    setLevel(level = homework1Variant2Level)
 }
 
-suspend fun setHomework1Variant3Arena() {
-    setArena(arena = homework1Variant3Arena)
+suspend fun setHomework1Variant3Level() {
+    setLevel(level = homework1Variant3Level)
 }
 
 /**

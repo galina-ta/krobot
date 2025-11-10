@@ -2,18 +2,22 @@
 
 package com.gala.krobot.engine.levels
 
-import com.gala.krobot.engine.common.arena.entity.arena.parseArena
+import com.gala.krobot.engine.common.arena.entity.arena.Level
+import com.gala.krobot.engine.common.arena.entity.arena.parseLevel
+import kotlin.properties.PropertyDelegateProvider
+
+val allLevels = mutableMapOf<String, Level>()
 
 // @formatter:off
 
-val demoArena = parseArena("""
+val demoLevel by level("""
 22222
 2s222
 2  f2
 22222
 """.trim())
 
-val dogArena = parseArena("""
+val dogLevel by level("""
 2222222
 22f22 2
 2     2
@@ -22,7 +26,7 @@ val dogArena = parseArena("""
 2222222
 """.trim())
 
-val arena1 = parseArena("""
+val level1 by level("""
 222222222
 222   222
 222 2 222
@@ -34,7 +38,7 @@ val arena1 = parseArena("""
 22s 2  22
 """.trim())
 
-val arena2 = parseArena("""
+val level2 by level("""
 2222222222
 s        2
 222222 222
@@ -45,7 +49,7 @@ s        2
 2222222222
 """.trim())
 
-val homework1DenisArena = parseArena("""
+val homework1DenisLevel by level("""
 222222222
 222   222
 222 2 222
@@ -57,7 +61,7 @@ val homework1DenisArena = parseArena("""
 22s 2  22
 """.trim())
 
-val homework1Variant1Arena = parseArena("""
+val homework1Variant1Level by level("""
 222222222222222222
 22222        22222
 2222         22222
@@ -66,7 +70,7 @@ val homework1Variant1Arena = parseArena("""
 22s 2222222 f22222
 """.trim())
 
-val homework1Variant2Arena = parseArena("""
+val homework1Variant2Level by level("""
 2222222222222222222
 222     2222  22 f2
 22  222  222  2  22
@@ -77,7 +81,7 @@ val homework1Variant2Arena = parseArena("""
 2222222222222222222
 """.trim())
 
-val homework1Variant3Arena = parseArena("""
+val homework1Variant3Level by level("""
 22222222222222222222222222
 2s2222222            22222
 2   222   222222222    222
@@ -89,14 +93,14 @@ val homework1Variant3Arena = parseArena("""
 22222222222222222222222222
 """.trim())
 
-val arena3 = parseArena("""
+val level3 by level("""
 22222
 2s *2
 222f2
 22222
 """.trim())
 
-val homework2Variant1Arena = parseArena("""
+val homework2Variant1Level by level("""
 222222222222222222
 222222      222222
 2222  222222  2222
@@ -116,7 +120,7 @@ val homework2Variant1Arena = parseArena("""
 222222222222222222
 """.trim())
 
-val arena4 = parseArena("""
+val level4 by level("""
 2222222222
 s        2
 222222*222
@@ -127,14 +131,14 @@ s        2
 2222222222
 """.trim())
 
-val arena5 = parseArena("""
+val level5 by level("""
 22222
 2s #2
 222f2
 22222
 """.trim())
 
-val arena6 = parseArena("""
+val level6 by level("""
 2222222222
 s        2
 222222#222
@@ -145,7 +149,7 @@ s        2
 2222222222
 """.trim())
 
-val homework3DenisArena = parseArena("""
+val homework3DenisLevel by level("""
      22222222222222222222
      2        2  2#       2
      2   2         22 2   2 22
@@ -158,7 +162,7 @@ val homework3DenisArena = parseArena("""
   2222  2222      2222  2222
 """.trimIndent())
 
-val homework3EduardArena = parseArena("""
+val homework3EduardLevel by level("""
 2222
   s22
      2
@@ -184,7 +188,7 @@ val homework3EduardArena = parseArena("""
   2    f2
 """.trimIndent())
 
-val arena7 = parseArena("""
+val level7 by level("""
 22222222222
 2f2222222s2
 2  22222  2
@@ -199,7 +203,7 @@ val arena7 = parseArena("""
 22222222222
 """.trimIndent())
 
-val homework4EduardArena = parseArena("""
+val homework4EduardLevel by level("""
  22222222222
 2    f     2
 222222     2         22222222222
@@ -219,7 +223,7 @@ val homework4EduardArena = parseArena("""
            222      222   222     222
 """.trimIndent())
 
-val homework4DenisArena = parseArena("""
+val homework4DenisLevel by level("""
              22222222222
    22222 2222           222222
  22   vf22  #                22222
@@ -234,7 +238,7 @@ val homework4DenisArena = parseArena("""
                222222    222  222
 """.trimIndent())
 
-val arena8 = parseArena("""
+val level8 by level("""
 222222222
 222%%%222
 222%2%222
@@ -245,3 +249,11 @@ val arena8 = parseArena("""
 222%2 222
 22s%2  22
 """.trim())
+
+// @formatter:on
+
+private fun level(draw: String) = PropertyDelegateProvider<Any?, Lazy<Level>> { _, property ->
+    val level = parseLevel(draw)
+    allLevels[property.name] = level
+    lazyOf(level)
+}

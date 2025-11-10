@@ -25,12 +25,12 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.gala.krobot.engine.common.arena.ArenaViewModel
+import com.gala.krobot.engine.common.arena.LevelViewModel
 import com.gala.krobot.engine.common.arena.entity.RobotState
 import com.gala.krobot.engine.common.arena.entity.Size
-import com.gala.krobot.engine.common.arena.entity.arena.Arena
 import com.gala.krobot.engine.common.arena.entity.arena.Asset
 import com.gala.krobot.engine.common.arena.entity.arena.Block
+import com.gala.krobot.engine.common.arena.entity.arena.Level
 import com.gala.krobot.engine.common.arena.entity.rp
 import krobot.engine.generated.resources.Res
 import krobot.engine.generated.resources.password_texture
@@ -41,15 +41,12 @@ import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun Maze(
-    viewModel: ArenaViewModel,
-    modifier: Modifier = Modifier,
-) {
+fun LevelScreen(viewModel: LevelViewModel) {
     val state = viewModel.state
     var rootSize: Size.Real by remember { mutableStateOf(Size.Real(0.rp, 0.rp)) }
 
-    val pointSize: Float = remember(rootSize, state.arena) {
-        viewModel.state.arena?.calculatePointSize(rootSize) ?: 0f
+    val pointSize: Float = remember(rootSize, state.level) {
+        viewModel.state.level?.calculatePointSize(rootSize) ?: 0f
     }
 
     val density = LocalDensity.current
@@ -65,40 +62,31 @@ fun Maze(
                 )
             },
     ) {
-        if (pointSize != 0f && state.arena != null && state.robotState != null) {
-            Arena(
-                arena = state.arena,
+        if (pointSize != 0f && state.level != null && state.robotState != null) {
+            Level(
+                level = state.level,
                 robotState = state.robotState,
                 movesRight = state.movesRight,
                 pointSize = pointSize,
             )
         }
-
-//        Button(
-//            modifier = Modifier.align(Alignment.BottomCenter),
-//            onClick = {
-//                viewModel.executeCopiedCodeClicked()
-//            },
-//        ) {
-//            Text("Выполнить скопированный код")
-//        }
     }
 }
 
 @Composable
-private fun BoxScope.Arena(
-    arena: Arena,
+private fun BoxScope.Level(
+    level: Level,
     robotState: RobotState,
     movesRight: Boolean,
     pointSize: Float
 ) {
     Box(
         modifier = Modifier
-            .size(arena.size.render(pointSize))
+            .size(level.size.render(pointSize))
             .align(Alignment.Center)
             .background(Color.White)
     ) {
-        arena.blocks.forEach { block ->
+        level.blocks.forEach { block ->
             Block(block, pointSize)
         }
         Robot(
