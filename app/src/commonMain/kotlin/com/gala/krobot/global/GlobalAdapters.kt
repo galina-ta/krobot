@@ -1,7 +1,7 @@
 package com.gala.krobot.global
 
-import com.gala.krobot.engine.common.arena.RobotController
-import com.gala.krobot.engine.common.arena.entity.arena.Level
+import com.gala.krobot.engine.level.RobotController
+import com.gala.krobot.engine.level.entity.Level
 import com.gala.krobot.engine.levels.level1
 import com.gala.krobot.engine.levels.demoLevel
 import com.gala.krobot.engine.levels.homework1Variant1Level

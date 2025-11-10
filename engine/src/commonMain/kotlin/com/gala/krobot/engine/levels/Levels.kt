@@ -2,8 +2,8 @@
 
 package com.gala.krobot.engine.levels
 
-import com.gala.krobot.engine.common.arena.entity.arena.Level
-import com.gala.krobot.engine.common.arena.entity.arena.parseLevel
+import com.gala.krobot.engine.level.entity.Level
+import com.gala.krobot.engine.level.entity.parseLevel
 import kotlin.properties.PropertyDelegateProvider
 
 val allLevels = mutableMapOf<String, Level>()

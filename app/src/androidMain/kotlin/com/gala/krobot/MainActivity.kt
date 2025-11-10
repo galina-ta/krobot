@@ -11,11 +11,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
 import com.gala.krobot.global.globalRobotController
 import com.gala.krobot.ui.theme.KrobotTheme
-import com.gala.krobot.engine.common.arena.LevelViewModel
-import com.gala.krobot.engine.common.arena.CreateRobotControllerHolder
-import com.gala.krobot.engine.common.arena.ui.LevelScreen
-import com.gala.krobot.engine.impls.RobotExecutorImpl
-import com.gala.krobot.engine.impls.RobotStatesApplierImpl
+import com.gala.krobot.engine.level.LevelViewModel
+import com.gala.krobot.engine.level.CreateRobotControllerHolder
+import com.gala.krobot.engine.level.ui.LevelScreen
+import com.gala.krobot.engine.level.impls.RobotExecutorImpl
+import com.gala.krobot.engine.level.impls.RobotStatesApplierImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
