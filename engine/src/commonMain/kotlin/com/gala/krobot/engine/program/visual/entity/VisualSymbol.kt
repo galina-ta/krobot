@@ -37,19 +37,22 @@ sealed interface VisualSymbol {
                 }
             }
 
-            data object SetLevel : FunctionCall
+            data class SetLevel(val name: String) : FunctionCall
             data object Use : FunctionCall
 
             data class User(val name: Identifier) : FunctionCall, Expression
 
             companion object {
-                fun allExceptRun(definitions: List<VisualFunctionDefinition>): List<FunctionCall> =
-                    allStatic() + allNonRunFunctions(definitions)
+                fun allExceptRun(
+                    definitions: List<VisualFunctionDefinition>,
+                    levelName: String,
+                ): List<FunctionCall> =
+                    allStatic(levelName) + allNonRunFunctions(definitions)
 
-                private fun allStatic(): List<FunctionCall> = listOf(
+                private fun allStatic(levelName: String): List<FunctionCall> = listOf(
                     *Move.all().toTypedArray(),
                     Use,
-                    SetLevel,
+                    SetLevel(levelName),
                 )
 
                 private fun allNonRunFunctions(

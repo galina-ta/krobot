@@ -58,38 +58,45 @@ fun VisualProgramEditor(
     Column(modifier = modifier.background(Color.White)) {
         LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f)) {
             itemsIndexed(state.program.flatLines) { index, line ->
-                Row(
-                    modifier = Modifier
-                        .then(
-                            if (line.isSelected)
-                                Modifier.background(Color(0xFF82B1FF))
-                            else
-                                Modifier,
-                        )
-                        .then(
-                            if (line.isSelectable)
-                                Modifier.clickable {
-                                    viewModel.selectLine(line)
-                                }
-                            else
-                                Modifier
-                        )
-                ) {
-                    Text(
+                Row {
+                    Row(
                         modifier = Modifier
-                            .padding(horizontal = 6.dp)
-                            .width(25.dp)
-                            .align(Alignment.CenterVertically),
-                        color = Color(0xFF1565C0),
-                        fontStyle = FontStyle.Italic,
-                        text = "${index + 1}"
-                    )
-                    line.symbols.forEach { symbol ->
-                        Symbol(
-                            symbol = symbol,
-                            levelName = state.levelName
+                            .width(400.dp)
+                            .then(
+                                if (line.isSelected)
+                                    Modifier.background(Color(0xFF82B1FF))
+                                else
+                                    Modifier,
+                            )
+                            .then(
+                                if (line.isSelectable)
+                                    Modifier.clickable {
+                                        viewModel.selectLine(line)
+                                    }
+                                else
+                                    Modifier
+                            )
+                    ) {
+                        Text(
+                            modifier = Modifier
+                                .padding(horizontal = 6.dp)
+                                .width(25.dp)
+                                .align(Alignment.CenterVertically),
+                            color = Color(0xFF1565C0),
+                            fontStyle = FontStyle.Italic,
+                            text = "${index + 1}"
                         )
+                        line.symbols.forEach { symbol ->
+                            Symbol(
+                                symbol = symbol,
+                                levelName = state.levelName
+                            )
+                        }
                     }
+                    Comment(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        line = line,
+                    )
                 }
             }
         }

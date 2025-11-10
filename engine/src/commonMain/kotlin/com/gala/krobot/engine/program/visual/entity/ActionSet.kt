@@ -31,7 +31,7 @@ data class ActionSet(
                         canReturn = true,
                     ),
                     functionIdentifiers,
-                    statements(program.functionDefinitions),
+                    statements(program),
                     if (selectedLine.hasOpenedRoundBracket)
                         parameterDefinitionIdentifiers
                     else
@@ -41,7 +41,7 @@ data class ActionSet(
                 selectedLine.isVariableDefinition -> listOfNotNull(
                     general(canDefineVariable = true, canReturn = true),
                     variableDefinitionIdentifiers,
-                    statements(program.functionDefinitions),
+                    statements(program),
                     expressions(
                         parameterNames = listOfNotNull(selectedFunction.parameterName),
                         variableDefinitionNames = selectedFunction.variableDefinitionNames,
@@ -56,7 +56,7 @@ data class ActionSet(
                         hasParameter = selectedLine.hasOpenedRoundBracket,
                         canReturn = true,
                     ),
-                    statements(program.functionDefinitions),
+                    statements(program),
                     *if (selectedLine.hasOpenedRoundBracket)
                         arrayOf(
                             callParameterName(
@@ -77,7 +77,7 @@ data class ActionSet(
                         canDefineVariable = true,
                         canReturn = true,
                     ),
-                    statements(program.functionDefinitions),
+                    statements(program),
                     expressions(
                         parameterNames = listOfNotNull(selectedFunction.parameterName),
                         variableDefinitionNames = selectedFunction.variableDefinitionNames,
@@ -110,14 +110,14 @@ data class ActionSet(
             }
         )
 
-        private fun statements(
-            functionDefinitions: List<VisualFunctionDefinition>,
-        ) = ActionSet(
+        private fun statements(program: VisualProgram) = ActionSet(
             type = Type.AddStatement,
-            actions = VisualSymbol.Statement.FunctionCall.allExceptRun(functionDefinitions)
-                .map { call ->
-                    Action.AddStatement(statement = call)
-                }
+            actions = VisualSymbol.Statement.FunctionCall.allExceptRun(
+                definitions = program.functionDefinitions,
+                levelName = program.levelName,
+            ).map { call ->
+                Action.AddStatement(statement = call)
+            }
         )
 
         private fun expressions(

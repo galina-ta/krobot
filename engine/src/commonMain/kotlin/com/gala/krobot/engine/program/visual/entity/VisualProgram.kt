@@ -4,6 +4,7 @@ import androidx.compose.runtime.Immutable
 
 @Immutable
 data class VisualProgram(
+    val levelName: String,
     val functionDefinitions: List<VisualFunctionDefinition> = emptyList(),
 ) {
     val flatLines = functionDefinitions.flatMap { it.lines }
@@ -262,7 +263,7 @@ data class VisualProgram(
         functionDefinitions.find { it.isSelected }
 
     companion object {
-        val empty = VisualProgram()
+        fun empty(levelName: String) = VisualProgram(levelName = levelName)
             .modified(Action.AddFunctionDefinition)
             .modified(Action.SetName.FunctionDefinition(VisualSymbol.Identifier.Run))
     }

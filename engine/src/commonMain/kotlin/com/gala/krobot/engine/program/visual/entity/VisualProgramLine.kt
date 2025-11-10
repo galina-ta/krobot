@@ -57,7 +57,7 @@ data class VisualProgramLine(
                 listOfNotNull(definition?.parameterName)
             }
 
-            VisualSymbol.Statement.FunctionCall.SetLevel,
+            is VisualSymbol.Statement.FunctionCall.SetLevel,
             null -> emptyList()
         }
     }

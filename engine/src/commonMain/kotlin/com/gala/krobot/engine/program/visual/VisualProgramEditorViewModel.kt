@@ -8,17 +8,17 @@ import com.gala.krobot.engine.program.visual.entity.VisualProgramLine
 import com.gala.krobot.engine.program.visual.entity.toProgram
 
 class VisualProgramEditorViewModel(
-    private val levelName: String,
+    levelName: String,
     private val programUpdated: (Program) -> Unit,
 ) : BaseViewModel<VisualProgramEditorState>(
     VisualProgramEditorState(
-        program = VisualProgram.empty,
+        program = VisualProgram.empty(levelName),
         levelName = levelName,
     )
 ) {
     fun executeAction(action: Action) {
         updateState { copy(program = program.modified(action)) }
-        programUpdated(state.program.toProgram(levelName))
+        programUpdated(state.program.toProgram())
     }
 
     fun selectLine(line: VisualProgramLine) {

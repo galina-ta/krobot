@@ -3,7 +3,7 @@ package com.gala.krobot.engine.program.visual.entity
 import com.gala.krobot.engine.program.Program
 import com.gala.krobot.engine.program.entity.Token
 
-fun VisualProgram.toProgram(levelName: String): Program = Program(
+fun VisualProgram.toProgram(): Program = Program(
     functionDefinitions = functionDefinitions.map { definition ->
         val identifier = definition.name
         Token.FunctionDefinition(
@@ -34,8 +34,8 @@ fun VisualProgram.toProgram(levelName: String): Program = Program(
                         }
                     }
 
-                    VisualSymbol.Statement.FunctionCall.SetLevel ->
-                        Token.Statement.FunctionCall.SetLevel(levelName)
+                    is VisualSymbol.Statement.FunctionCall.SetLevel ->
+                        Token.Statement.FunctionCall.SetLevel(firstSymbol.name)
 
                     is VisualSymbol.Statement.FunctionCall.User -> {
                         val expressionSymbol = line.parameterSymbol<VisualSymbol.Expression>()
