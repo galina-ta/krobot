@@ -3,7 +3,6 @@ package com.gala.maze.common.arena
 import com.gala.maze.common.BaseViewModel
 import com.gala.maze.common.arena.entity.RobotState
 import com.gala.maze.common.arena.entity.arena.Arena
-import com.gala.maze.common.program.text.ProgramParser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -12,8 +11,6 @@ class ArenaViewModel(
     createRobotControllerHolder: CreateRobotControllerHolder,
     private val executor: RobotExecutor,
     private val statesApplier: RobotStatesApplier,
-//    private val clipboardReceiver: ClipboardReceiver,
-//    private val programParser: ProgramParser,
     private val scope: CoroutineScope,
 ) : BaseViewModel<ArenaViewState>(
     initialState = ArenaViewState(
@@ -81,13 +78,6 @@ class ArenaViewModel(
             execute(robotController)
         }
     }
-
-//    fun executeCopiedCodeClicked() {
-//        val text = clipboardReceiver.get() ?: return
-//        val commands = programParser.parse(text)
-//        val controller = ProgramRobotController(commands)
-//        execute(controller)
-//    }
 }
 
 data class ArenaViewState(

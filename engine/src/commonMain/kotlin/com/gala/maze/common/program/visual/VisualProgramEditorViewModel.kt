@@ -2,7 +2,10 @@ package com.gala.maze.common.program.visual
 
 import com.gala.maze.common.BaseViewModel
 import com.gala.maze.common.program.Program
+import com.gala.maze.common.program.visual.model.Action
 import com.gala.maze.common.program.visual.model.VisualProgram
+import com.gala.maze.common.program.visual.model.VisualProgramLine
+import com.gala.maze.common.program.visual.model.toProgram
 
 class VisualProgramEditorViewModel(
     private val levelName: String,
@@ -13,12 +16,12 @@ class VisualProgramEditorViewModel(
         levelName = levelName,
     )
 ) {
-    fun executeAction(action: VisualProgram.Action) {
+    fun executeAction(action: Action) {
         updateState { copy(program = program.modified(action)) }
         programUpdated(state.program.toProgram(levelName))
     }
 
-    fun selectLine(line: VisualProgram.Line) {
+    fun selectLine(line: VisualProgramLine) {
         updateState { copy(program = program.withLineSelected(line)) }
     }
 }

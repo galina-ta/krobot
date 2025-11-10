@@ -25,6 +25,10 @@ sealed class SizePoint : Comparable<SizePoint> {
         return value.toString()
     }
 
+    fun intHash(): Int {
+        return value
+    }
+
     data class Virtual(override val value: Int) : SizePoint() {
         operator fun plus(other: SizePoint) = Virtual(this.value + other.value)
         operator fun minus(other: SizePoint) = Virtual(this.value - other.value)

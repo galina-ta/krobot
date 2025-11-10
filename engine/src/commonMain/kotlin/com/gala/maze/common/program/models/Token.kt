@@ -1,29 +1,53 @@
 package com.gala.maze.common.program.models
 
 sealed interface Token {
+    sealed interface Expression {
+        object Empty : Expression
+    }
 
-    sealed interface Usage : Token {
+    sealed interface Statement : Token {
 
-        sealed interface Function : Usage {
+        sealed interface FunctionCall : Statement {
 
-            data class DefinedFunction(val name: String) : Function
+            data class DefinedFunction(
+                val name: String,
+                val parameter: Expression?,
+            ) : FunctionCall, Expression
 
-            data class SetArena(val name: String) : Function
+            data class SetArena(val name: String) : FunctionCall
 
-            sealed interface Move : Function {
-                val stepsCount: Int
+            data class Use(val what: Expression?) : FunctionCall
 
-                data class Left(override val stepsCount: Int) : Move
-                data class Right(override val stepsCount: Int) : Move
-                data class Up(override val stepsCount: Int) : Move
-                data class Down(override val stepsCount: Int) : Move
+            sealed interface Move : FunctionCall {
+                val stepCount: Expression?
+
+                data class Left(override val stepCount: Expression?) : Move
+                data class Right(override val stepCount: Expression?) : Move
+                data class Up(override val stepCount: Expression?) : Move
+                data class Down(override val stepCount: Expression?) : Move
             }
         }
+
+        data class VariableDefinition(
+            val name: String,
+            val value: Expression,
+        ) : Statement
+
+        data class Return(val what: Expression) : Statement
     }
+
+    data class VariableUsage(val name: String) : Expression
+
+    data class ParameterUsage(val name: String) : Expression
+
+    data class Literal(val value: Int) : Expression
+
+    data object Get : Expression
 
     data class FunctionDefinition(
         val name: String,
-        val tokens: List<Usage>,
+        val parameterName: String?,
+        val statements: List<Statement>,
         val isMain: Boolean,
     ) : Token
 }

@@ -190,6 +190,7 @@ private fun Block(block: Block, pointSize: Float) {
                 ScaledText(
                     text = asset.password,
                     scale = 0.4f,
+                    color = Color(0xFFFF5252),
                     pointSize = pointSize,
                 )
             }

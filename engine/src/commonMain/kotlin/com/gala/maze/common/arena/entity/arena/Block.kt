@@ -112,7 +112,7 @@ class MaybeCheckKeyBlock(position: Position) : CheckKeyBlock(position) {
 }
 
 class PasswordBlock(position: Position) : Block(position) {
-    private val password = position.hash()
+    private val password = (position.intHash() % 10).toString()
 
     override val asset = Asset.Password(password)
 

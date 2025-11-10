@@ -143,8 +143,6 @@ private fun Main(
                         createRobotControllerHolder = createRobotControllerHolder,
                         executor = RobotExecutorImpl(),
                         statesApplier = RobotStatesApplierImpl(),
-//        clipboardReceiver = AndroidClipboardReceiver(AppHolder.instance),
-//                                programParser = ProgramParser(),
                         scope = CoroutineScope(Dispatchers.Main + SupervisorJob())
                     )
                 }

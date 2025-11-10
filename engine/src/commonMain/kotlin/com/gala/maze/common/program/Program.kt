@@ -3,25 +3,27 @@ package com.gala.maze.common.program
 import com.gala.maze.common.program.models.Token
 
 data class Program(
-    val tokens: List<Token.FunctionDefinition>,
+    val functionDefinitions: List<Token.FunctionDefinition>,
 ) {
     companion object {
         val empty = Program(
-            tokens = listOf(
+            functionDefinitions = listOf(
                 Token.FunctionDefinition(
                     name = "",
+                    parameterName = null,
+                    statements = emptyList(),
                     isMain = true,
-                    tokens = emptyList(),
                 )
             )
         )
 
         fun setLevel(levelName: String): Program = Program(
-            tokens = listOf(
+            functionDefinitions = listOf(
                 Token.FunctionDefinition(
                     name = "",
+                    parameterName = null,
+                    statements = listOf(Token.Statement.FunctionCall.SetArena(name = levelName)),
                     isMain = true,
-                    tokens = listOf(Token.Usage.Function.SetArena(name = levelName)),
                 )
             )
         )

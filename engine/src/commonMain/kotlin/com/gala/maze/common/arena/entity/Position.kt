@@ -27,7 +27,11 @@ data class Position(
     }
 
     fun hash(): String {
-        return "p${x.hash()}${y.hash()}"
+        return "p${x.hash() + y.hash()}"
+    }
+
+    fun intHash(): Int {
+        return x.intHash() + y.intHash()
     }
 
     override fun toString(): String = "$x,$y"

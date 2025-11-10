@@ -14,9 +14,8 @@ import com.gala.krobot.ui.theme.KrobotTheme
 import com.gala.maze.common.arena.ArenaViewModel
 import com.gala.maze.common.arena.CreateRobotControllerHolder
 import com.gala.maze.common.arena.ui.Maze
-import com.gala.maze.common.program.text.ProgramParser
-import com.gala.maze.platform.arena.AndroidRobotExecutor
-import com.gala.maze.platform.arena.AndroidRobotStatesApplier
+import com.gala.maze.impls.RobotExecutorImpl
+import com.gala.maze.impls.RobotStatesApplierImpl
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -34,10 +33,8 @@ class MainActivity : ComponentActivity() {
 
         val viewModel = ArenaViewModel(
             createRobotControllerHolder = createRobotControllerHolder,
-            executor = AndroidRobotExecutor(),
-            statesApplier = AndroidRobotStatesApplier(),
-//            clipboardReceiver = AndroidClipboardReceiver(AppHolder.instance),
-            programParser = ProgramParser(),
+            executor = RobotExecutorImpl(),
+            statesApplier = RobotStatesApplierImpl(),
             scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob()),
         )
 

@@ -1,13 +1,13 @@
 [versions]
 agp = "8.13.0"
-kotlin = "2.2.20"
+kotlin = "2.2.21"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 kotlinxBrowser = "0.5.0"
 kotlinxCoroutinesCore = "1.10.2"
-ktorClientCore = "3.3.1"
+ktorClientCore = "3.3.2"
 lifecycleRuntimeKtx = "2.9.4"
-composeMultiplatform = "1.9.0"
+composeMultiplatform = "1.9.3"
 activityCompose = "1.11.0"
 lifecycle = "2.9.4"
 
