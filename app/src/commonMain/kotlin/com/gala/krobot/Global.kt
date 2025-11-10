@@ -3,7 +3,7 @@ package com.gala.krobot
 import com.gala.krobot.global.moveLeft
 import com.gala.krobot.global.moveUp
 import com.gala.krobot.global.setArena
-import com.gala.maze.levels.dogArena
+import com.gala.krobot.engine.levels.dogArena
 
 // определяем функцию выполнить
 suspend fun run() {

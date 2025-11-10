@@ -1,6 +1,6 @@
 package com.gala.krobot
 
-import com.gala.maze.common.arena.RobotController
+import com.gala.krobot.engine.common.arena.RobotController
 
 fun createRobotController(): RobotController {
     return GlobalRobotController()

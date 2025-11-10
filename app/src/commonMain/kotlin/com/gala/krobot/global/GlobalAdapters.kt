@@ -1,13 +1,12 @@
 package com.gala.krobot.global
 
-import com.gala.maze.common.arena.RobotController
-import com.gala.maze.common.arena.entity.arena.Arena
-import com.gala.maze.levels.arena1
-import com.gala.maze.levels.demoArena
-import com.gala.maze.levels.homework1Variant1Arena
-import com.gala.maze.levels.homework1Variant2Arena
-import com.gala.maze.levels.homework1Variant3Arena
-import kotlinx.coroutines.delay
+import com.gala.krobot.engine.common.arena.RobotController
+import com.gala.krobot.engine.common.arena.entity.arena.Arena
+import com.gala.krobot.engine.levels.arena1
+import com.gala.krobot.engine.levels.demoArena
+import com.gala.krobot.engine.levels.homework1Variant1Arena
+import com.gala.krobot.engine.levels.homework1Variant2Arena
+import com.gala.krobot.engine.levels.homework1Variant3Arena
 
 lateinit var globalRobotController: RobotController
 
