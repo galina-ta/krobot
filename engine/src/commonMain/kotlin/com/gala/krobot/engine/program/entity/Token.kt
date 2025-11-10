@@ -1,4 +1,4 @@
-package com.gala.krobot.engine.program.models
+package com.gala.krobot.engine.program.entity
 
 sealed interface Token {
     sealed interface Expression {

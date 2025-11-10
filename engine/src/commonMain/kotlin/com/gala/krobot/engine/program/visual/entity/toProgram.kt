@@ -1,7 +1,7 @@
-package com.gala.krobot.engine.program.visual.model
+package com.gala.krobot.engine.program.visual.entity
 
 import com.gala.krobot.engine.program.Program
-import com.gala.krobot.engine.program.models.Token
+import com.gala.krobot.engine.program.entity.Token
 
 fun VisualProgram.toProgram(levelName: String): Program = Program(
     functionDefinitions = functionDefinitions.map { definition ->

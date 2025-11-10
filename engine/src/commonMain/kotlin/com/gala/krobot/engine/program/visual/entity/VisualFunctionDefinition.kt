@@ -1,4 +1,4 @@
-package com.gala.krobot.engine.program.visual.model
+package com.gala.krobot.engine.program.visual.entity
 
 data class VisualFunctionDefinition(
     val isSelected: Boolean,

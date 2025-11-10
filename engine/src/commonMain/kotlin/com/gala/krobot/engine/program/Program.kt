@@ -1,6 +1,6 @@
 package com.gala.krobot.engine.program
 
-import com.gala.krobot.engine.program.models.Token
+import com.gala.krobot.engine.program.entity.Token
 
 data class Program(
     val functionDefinitions: List<Token.FunctionDefinition>,

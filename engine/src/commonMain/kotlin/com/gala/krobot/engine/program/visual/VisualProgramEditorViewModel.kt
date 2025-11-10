@@ -2,10 +2,10 @@ package com.gala.krobot.engine.program.visual
 
 import com.gala.krobot.engine.base.BaseViewModel
 import com.gala.krobot.engine.program.Program
-import com.gala.krobot.engine.program.visual.model.Action
-import com.gala.krobot.engine.program.visual.model.VisualProgram
-import com.gala.krobot.engine.program.visual.model.VisualProgramLine
-import com.gala.krobot.engine.program.visual.model.toProgram
+import com.gala.krobot.engine.program.visual.entity.Action
+import com.gala.krobot.engine.program.visual.entity.VisualProgram
+import com.gala.krobot.engine.program.visual.entity.VisualProgramLine
+import com.gala.krobot.engine.program.visual.entity.toProgram
 
 class VisualProgramEditorViewModel(
     private val levelName: String,

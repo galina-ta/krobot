@@ -36,9 +36,9 @@ import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.gala.krobot.engine.program.visual.VisualProgramEditorViewModel
-import com.gala.krobot.engine.program.visual.model.Action
-import com.gala.krobot.engine.program.visual.model.ActionSet
-import com.gala.krobot.engine.program.visual.model.VisualSymbol
+import com.gala.krobot.engine.program.visual.entity.Action
+import com.gala.krobot.engine.program.visual.entity.ActionSet
+import com.gala.krobot.engine.program.visual.entity.VisualSymbol
 import krobot.engine.generated.resources.Res
 import krobot.engine.generated.resources.SpaceMono_Regular
 import krobot.engine.generated.resources.arrow_up

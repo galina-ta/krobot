@@ -2,7 +2,7 @@ package com.gala.krobot.engine.program
 
 import com.gala.krobot.engine.level.RobotController
 import com.gala.krobot.engine.level.entity.Level
-import com.gala.krobot.engine.program.models.Token
+import com.gala.krobot.engine.program.entity.Token
 import com.gala.krobot.engine.levels.allLevels
 import kotlin.jvm.JvmInline
 
