@@ -26,11 +26,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gala.krobot.engine.level.LevelViewModel
-import com.gala.krobot.engine.level.entity.RobotState
-import com.gala.krobot.engine.level.entity.Size
 import com.gala.krobot.engine.level.entity.Asset
 import com.gala.krobot.engine.level.entity.Block
 import com.gala.krobot.engine.level.entity.Level
+import com.gala.krobot.engine.level.entity.RobotState
+import com.gala.krobot.engine.level.entity.Size
 import com.gala.krobot.engine.level.entity.rp
 import krobot.engine.generated.resources.Res
 import krobot.engine.generated.resources.password_texture
@@ -177,12 +177,13 @@ private fun Block(block: Block, pointSize: Float) {
 
             is Asset.Password -> {
                 ResourceImage(
+                    modifier = Modifier.alpha(0.7f),
                     resource = Res.drawable.password_texture,
                 )
                 ScaledText(
                     text = asset.password,
-                    scale = 0.4f,
-                    color = Color(0xFFFF5252),
+                    scale = 0.7f,
+                    color = Color(0xFFFF3D00),
                     pointSize = pointSize,
                 )
             }
