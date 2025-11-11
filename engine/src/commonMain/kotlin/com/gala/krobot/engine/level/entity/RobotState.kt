@@ -2,12 +2,12 @@ package com.gala.krobot.engine.level.entity
 
 data class RobotState(
     val position: Position,
-    val text: String = "",
     val finishReason: RobotException? = null,
     val initKeyPosition: Position? = null,
     val nextStepKey: String? = null,
     val currentKey: String? = null,
-    val code: Int? = null,
+    val nextStepCode: Int? = null,
+    val currentCode: Int? = null,
     val beforeMove: () -> Unit = {},
     val isWon: Boolean = false,
     val source: Source? = null,
@@ -27,11 +27,13 @@ data class RobotState(
             position = position.moved(direction),
             nextStepKey = null,
             currentKey = nextStepKey,
+            nextStepCode = null,
+            currentCode = nextStepCode,
         )
     }
 
-    fun displaying(text: String): RobotState {
-        return copy(text = text)
+    fun withCode(code: Int): RobotState {
+        return copy(nextStepCode = code)
     }
 
     fun withInitKey(): RobotState {
@@ -52,29 +54,6 @@ data class RobotState(
 
     fun getKey(): String {
         return initKeyPosition?.hash() ?: throw KeyIsNotProducedException()
-    }
-
-    fun withCode(code: Int): RobotState {
-        return copy(code = code)
-    }
-
-    fun checkCode() {
-        val codeString = when (code) {
-            0 -> "zero"
-            1 -> "one"
-            2 -> "two"
-            3 -> "three"
-            4 -> "four"
-            5 -> "five"
-            6 -> "six"
-            7 -> "seven"
-            8 -> "eight"
-            9 -> "nine"
-            else -> throw WrongPasswordException()
-        }
-        if (text != codeString) {
-            throw WrongPasswordException()
-        }
     }
 
     fun withBeforeMove(beforeMove: () -> Unit): RobotState {
@@ -114,7 +93,3 @@ class RobotException : RuntimeException {
 class AlreadyHaveKeyException : IllegalStateException("You've already got key. Use it")
 
 class KeyIsNotProducedException : IllegalStateException("You need to produce the key")
-
-class KeyIsNotEnteredException : IllegalStateException("You need to enter the key")
-
-class WrongPasswordException : IllegalStateException("Robot is displaying a wrong password")

@@ -69,7 +69,7 @@ class ProgramRobotController(
                 when (val value = returningValue(what, parameters, variables)) {
                     Value.Collect -> useKey(key = getKey())
                     is Value.Key -> useKey(key = value.key)
-                    is Value.Number -> display(password = value.value.toString())
+                    is Value.Number -> showCode(code = value.value)
                 }
             }
 

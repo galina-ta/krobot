@@ -36,7 +36,6 @@ import krobot.engine.generated.resources.Res
 import krobot.engine.generated.resources.password_texture
 import krobot.engine.generated.resources.robot
 import krobot.engine.generated.resources.target
-import krobot.engine.generated.resources.verify
 import org.jetbrains.compose.resources.DrawableResource
 import org.jetbrains.compose.resources.painterResource
 
@@ -113,7 +112,7 @@ private fun Robot(state: RobotState, movesRight: Boolean, pointSize: Float) {
             resource = Res.drawable.robot,
         )
         ScaledText(
-            text = state.text,
+            text = (state.nextStepCode ?: state.currentCode)?.toString() ?: "",
             scale = 0.7f,
             color = Color(0xFF00FF00),
             pointSize = pointSize,
@@ -175,30 +174,16 @@ private fun Block(block: Block, pointSize: Float) {
                 )
             }
 
-            is Asset.Password -> {
+            is Asset.CheckCode -> {
                 ResourceImage(
                     modifier = Modifier.alpha(0.7f),
                     resource = Res.drawable.password_texture,
                 )
                 ScaledText(
-                    text = asset.password,
+                    text = asset.code.toString(),
                     scale = 0.7f,
                     color = Color(0xFFFF3D00),
                     pointSize = pointSize,
-                )
-            }
-
-            is Asset.Code -> {
-                ScaledText(
-                    text = asset.randomCode.toString(),
-                    scale = 0.7f,
-                    pointSize = pointSize,
-                )
-            }
-
-            is Asset.CheckCode -> {
-                ResourceImage(
-                    resource = Res.drawable.verify,
                 )
             }
         }

@@ -1,4 +1,4 @@
-@file:Suppress("SpellCheckingInspection")
+@file:Suppress("SpellCheckingInspection", "unused")
 
 package com.gala.krobot.engine.levels
 
@@ -194,11 +194,11 @@ val level7 by level("""
 2  22222  2
 22  222  22
 222  2  222
-2    2  c 2
+2    2    2
 2 2222222 2
 2#2222222 2
-2 2222222v2
-2v #  c   2
+2 2222222 2
+2  #      2
 22 22222 22
 22222222222
 """.trimIndent())
@@ -212,13 +212,13 @@ val homework4EduardLevel by level("""
      2     #2222                  222
      2     # 2                       22
      2     # 2                        22
-      222222 v    c                   22
+      222222                          22
            2222 222                 22 2
-              2 2 22222222222v222222   2
+              2 2 222222222222222222   2
              2 2  2 2       2 2    2   2
              2 2   2 2      2 2  2 2   2
             2 2    2 2     2  2  2  2     
-            2 2    2 2    2  c    2s2
+            2 2    2 2    2  2    2s2
            222      222   222     222
            222      222   222     222
 """.trimIndent())
@@ -226,12 +226,12 @@ val homework4EduardLevel by level("""
 val homework4DenisLevel by level("""
              22222222222
    22222 2222           222222
- 22   vf22  #                22222
-22     v2 2  #                   22
+ 22    f22  #                22222
+22      2 2  #                   22
  22    222   #                    22
   2       22 #         2    22222 2 2
-  22    22#  #        2     v    2  22
-    2  c   222 2     2    2222  c2  22
+  22    22#  #        2          2  22
+    2      222 2     2    2222   2  22
      222   2  2  2  2 22222 2 22 2
        2222    2  2  2    2 2  2s2
                 22 22     22   22
@@ -240,14 +240,14 @@ val homework4DenisLevel by level("""
 
 val level8 by level("""
 222222222
-222%%%222
-222%2%222
-2%%%2%%%2
-2%22222%2
-2%%%  2f2
-222%2 222
-222%2 222
-22s%2  22
+222   222
+222 2 222
+2   2   2
+2 22222 2
+2     2f2
+222 2 222
+222 2 222
+22s 2  22
 """.trim())
 
 // @formatter:on

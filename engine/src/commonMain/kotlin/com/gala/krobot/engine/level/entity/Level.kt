@@ -99,11 +99,8 @@ fun parseLevel(draw: String): Level {
                 's' -> initialRobotPosition = position
                 in '0'..'9' -> blocks.add(WallBlock(position, colorId = char.digitToInt()))
                 'f' -> blocks.add(TargetBlock(position))
-                '*' -> blocks.add(PasswordBlock(position))
+                '*' -> blocks.add(CheckCodeBlock(position))
                 '#' -> blocks.add(CheckKeyBlock(position))
-                '%' -> blocks.add(MaybeCheckKeyBlock(position))
-                'c' -> blocks.add(RandomCodeBlock(position))
-                'v' -> blocks.add(CheckCodeBlock(position))
                 ' ' -> Unit // skip
                 else -> throw IllegalArgumentException("char can not be '$char' position=$position")
             }

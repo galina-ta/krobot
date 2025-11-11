@@ -1,8 +1,5 @@
 package com.gala.krobot.engine.level.entity
 
-import kotlin.math.absoluteValue
-import kotlin.random.Random
-
 sealed class Block(
     val position: Position,
 ) : RobotStateMutationsProvider, RobotState.Source {
@@ -41,9 +38,7 @@ sealed class Asset {
     data class Wall(val colorId: Int) : Asset()
     object Target : Asset()
     object CheckKey : Asset()
-    data class Password(val password: String) : Asset()
-    data class Code(val randomCode: Int) : Asset()
-    object CheckCode : Asset()
+    data class CheckCode(val code: Int) : Asset()
 }
 
 class VoidBlock(position: Position) : Block(position) {
@@ -92,54 +87,14 @@ open class CheckKeyBlock(position: Position) : Block(position) {
     }
 }
 
-class MaybeCheckKeyBlock(position: Position) : CheckKeyBlock(position) {
-    private val needCheck = Random.nextInt() % 5 == 0 // Шанс 1/5
-
-    override val requiresKey = needCheck
-    override val asset: Asset = if (needCheck) Asset.CheckKey else Asset.Pass
-
-    override fun beforeRobotMove(robotState: RobotState): RobotState? {
-        return if (needCheck)
-            super.beforeRobotMove(robotState)
-        else
-            null
-    }
-}
-
-class PasswordBlock(position: Position) : Block(position) {
-    private val password = (position.intHash() % 10).toString()
-
-    override val asset = Asset.Password(password)
-
-    override fun beforeRobotMove(robotState: RobotState): RobotState? {
-        return if (robotState.position == position && robotState.text != password)
-            robotState.destroyed().withSource(source = this)
-        else
-            null
-    }
-}
-
-class RandomCodeBlock(position: Position) : Block(position) {
-    val randomCode = Random.nextInt().absoluteValue % 10
-
-    override val asset = Asset.Code(randomCode)
-
-    override fun afterRobotMove(robotState: RobotState): RobotState? {
-        return if (robotState.position == position)
-            robotState.withCode(randomCode)
-        else
-            null
-    }
-}
-
 class CheckCodeBlock(position: Position) : Block(position) {
-    override val asset = Asset.CheckCode
+    private val code = position.intHash() % 10
+
+    override val asset = Asset.CheckCode(code)
 
     override fun beforeRobotMove(robotState: RobotState): RobotState? {
-        return if (robotState.position == position)
-            robotState.also { state ->
-                state.checkCode()
-            }
+        return if (robotState.position == position && robotState.currentCode != code)
+            robotState.destroyed().withSource(source = this)
         else
             null
     }

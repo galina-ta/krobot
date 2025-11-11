@@ -1,10 +1,11 @@
+@file:Suppress("unused")
+
 package com.gala.krobot.engine.level
 
 import com.gala.krobot.engine.level.entity.Position
 import com.gala.krobot.engine.level.entity.RobotException
 import com.gala.krobot.engine.level.entity.RobotState
 import com.gala.krobot.engine.level.entity.Level
-import com.gala.krobot.engine.level.entity.RandomCodeBlock
 
 abstract class RobotController : RobotState.Source {
     var onLevelSet: (Level) -> Unit = {}
@@ -58,14 +59,8 @@ abstract class RobotController : RobotState.Source {
         return level.blockOn(nextPosition)?.requiresKey == true
     }
 
-    fun currentCode(): Int {
-        val block = level.blockOn(currentState.position)
-        require(block is RandomCodeBlock) { "Robot is not on a CodeBlock now" }
-        return block.randomCode
-    }
-
-    open suspend fun display(password: String) {
-        updateState(state = currentState.displaying(password))
+    open suspend fun showCode(code: Int) {
+        updateState(state = currentState.withCode(code))
     }
 
     open suspend fun moveRight(stepsCount: Int = 1) {

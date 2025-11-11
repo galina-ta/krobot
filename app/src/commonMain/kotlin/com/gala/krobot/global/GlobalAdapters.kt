@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package com.gala.krobot.global
 
 import com.gala.krobot.engine.level.RobotController
@@ -67,11 +69,11 @@ suspend fun moveUp(stepsCount: Int = 1) {
 }
 
 /**
- * Показать [password] на дисплее робота.
+ * Показать [code] на дисплее робота.
  * Нужно для прохождения блоков с паролем.
  */
-suspend fun display(password: String) {
-    globalRobotController.display(password)
+suspend fun showCode(code: Int) {
+    globalRobotController.showCode(code)
 }
 
 suspend fun getKey(): String {
@@ -80,10 +82,6 @@ suspend fun getKey(): String {
 
 suspend fun useKey(key: String) {
     globalRobotController.useKey(key)
-}
-
-fun currentCode(): Int {
-    return globalRobotController.currentCode()
 }
 
 suspend fun setBeforeMove(beforeMove: () -> Unit) {
