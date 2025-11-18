@@ -2,10 +2,11 @@
 
 package com.gala.krobot.engine.level
 
+import com.gala.krobot.engine.level.entity.Key
+import com.gala.krobot.engine.level.entity.Level
 import com.gala.krobot.engine.level.entity.Position
 import com.gala.krobot.engine.level.entity.RobotException
 import com.gala.krobot.engine.level.entity.RobotState
-import com.gala.krobot.engine.level.entity.Level
 
 abstract class RobotController : RobotState.Source {
     var onLevelSet: (Level) -> Unit = {}
@@ -29,12 +30,11 @@ abstract class RobotController : RobotState.Source {
         }
     }
 
-    suspend fun getKey(): String {
-        updateState(currentState.withInitKey())
-        return currentState.getKey()
+    fun collectKey(): Key {
+        return currentState.collectKey()
     }
 
-    suspend fun useKey(key: String) {
+    suspend fun useKey(key: Key) {
         updateState(currentState.withKey(key))
     }
 

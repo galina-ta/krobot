@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -33,6 +34,7 @@ import com.gala.krobot.engine.level.entity.RobotState
 import com.gala.krobot.engine.level.entity.Size
 import com.gala.krobot.engine.level.entity.rp
 import krobot.engine.generated.resources.Res
+import krobot.engine.generated.resources.key
 import krobot.engine.generated.resources.password_texture
 import krobot.engine.generated.resources.robot
 import krobot.engine.generated.resources.target
@@ -111,12 +113,20 @@ private fun Robot(state: RobotState, movesRight: Boolean, pointSize: Float) {
             modifier = Modifier.scale(scaleX = if (movesRight) 1f else -1f, scaleY = 1f),
             resource = Res.drawable.robot,
         )
-        ScaledText(
-            text = (state.nextStepCode ?: state.currentCode)?.toString() ?: "",
-            scale = 0.7f,
-            color = Color(0xFF00FF00),
-            pointSize = pointSize,
-        )
+        state.code?.let { code ->
+            ScaledText(
+                text = code.toString(),
+                scale = 0.7f,
+                color = Color(0xFF00FF00),
+                pointSize = pointSize,
+            )
+        }
+        if (state.key != null) {
+            ResourceImage(
+                modifier = Modifier.padding(6.dp),
+                resource = Res.drawable.key,
+            )
+        }
     }
 }
 
@@ -184,6 +194,13 @@ private fun Block(block: Block, pointSize: Float) {
                     scale = 0.7f,
                     color = Color(0xFFFF3D00),
                     pointSize = pointSize,
+                )
+            }
+
+            Asset.Key -> {
+                ResourceImage(
+                    resource = Res.drawable.key,
+                    modifier = Modifier.padding(all = 6.dp),
                 )
             }
         }

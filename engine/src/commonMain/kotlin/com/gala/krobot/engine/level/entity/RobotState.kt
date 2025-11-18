@@ -3,9 +3,9 @@ package com.gala.krobot.engine.level.entity
 data class RobotState(
     val position: Position,
     val finishReason: RobotException? = null,
-    val initKeyPosition: Position? = null,
-    val nextStepKey: String? = null,
-    val currentKey: String? = null,
+    val currentBlockCollectable: Collectable? = null,
+    val nextStepKey: Key? = null,
+    val currentKey: Key? = null,
     val nextStepCode: Int? = null,
     val currentCode: Int? = null,
     val beforeMove: () -> Unit = {},
@@ -13,6 +13,9 @@ data class RobotState(
     val source: Source? = null,
 ) {
     val size = Size.Virtual(width = 1.vp, height = 1.vp)
+
+    val key = currentKey ?: nextStepKey
+    val code = currentCode ?: nextStepCode
 
     fun destroyed(): RobotState {
         return copy(finishReason = RobotException("Robot is destroyed"))
@@ -29,6 +32,7 @@ data class RobotState(
             currentKey = nextStepKey,
             nextStepCode = null,
             currentCode = nextStepCode,
+            currentBlockCollectable = null,
         )
     }
 
@@ -36,24 +40,16 @@ data class RobotState(
         return copy(nextStepCode = code)
     }
 
-    fun withInitKey(): RobotState {
-        return if (initKeyPosition == null)
-            copy(initKeyPosition = position)
-        else
-            throw AlreadyHaveKeyException()
-    }
-
     fun isKeyValid(): Boolean {
-        val hash = initKeyPosition?.hash() ?: throw KeyIsNotProducedException()
-        return currentKey == hash
+        return currentKey != null
     }
 
-    fun withKey(key: String): RobotState {
+    fun withKey(key: Key): RobotState {
         return copy(nextStepKey = key)
     }
 
-    fun getKey(): String {
-        return initKeyPosition?.hash() ?: throw KeyIsNotProducedException()
+    fun getKey(): Key {
+        return currentKey ?: throw NoKeyCollectedException()
     }
 
     fun withBeforeMove(beforeMove: () -> Unit): RobotState {
@@ -66,6 +62,16 @@ data class RobotState(
 
     fun withSource(source: Source): RobotState {
         return copy(source = source)
+    }
+
+    fun withGettable(collectable: Collectable?): RobotState {
+        return copy(currentBlockCollectable = collectable)
+    }
+
+    fun collectKey(): Key {
+        return currentBlockCollectable
+            ?.also { it.collected() } as? Key
+            ?: throw NoKeyOnBlockException()
     }
 
     override fun toString(): String {
@@ -90,6 +96,6 @@ class RobotException : RuntimeException {
     }
 }
 
-class AlreadyHaveKeyException : IllegalStateException("You've already got key. Use it")
+class NoKeyOnBlockException : IllegalStateException("There is no key on the current block")
 
-class KeyIsNotProducedException : IllegalStateException("You need to produce the key")
+class NoKeyCollectedException : IllegalStateException("Key is not collected")

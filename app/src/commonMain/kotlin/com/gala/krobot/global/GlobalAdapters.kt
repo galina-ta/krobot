@@ -3,12 +3,13 @@
 package com.gala.krobot.global
 
 import com.gala.krobot.engine.level.RobotController
+import com.gala.krobot.engine.level.entity.Key
 import com.gala.krobot.engine.level.entity.Level
-import com.gala.krobot.engine.levels.level1
 import com.gala.krobot.engine.levels.demoLevel
 import com.gala.krobot.engine.levels.homework1Variant1Level
 import com.gala.krobot.engine.levels.homework1Variant2Level
 import com.gala.krobot.engine.levels.homework1Variant3Level
+import com.gala.krobot.engine.levels.level1
 
 lateinit var globalRobotController: RobotController
 
@@ -76,11 +77,11 @@ suspend fun showCode(code: Int) {
     globalRobotController.showCode(code)
 }
 
-suspend fun getKey(): String {
-    return globalRobotController.getKey()
+fun getKey(): Key {
+    return globalRobotController.collectKey()
 }
 
-suspend fun useKey(key: String) {
+suspend fun useKey(key: Key) {
     globalRobotController.useKey(key)
 }
 

@@ -1,9 +1,10 @@
 package com.gala.krobot.engine.program
 
 import com.gala.krobot.engine.level.RobotController
+import com.gala.krobot.engine.level.entity.Key
 import com.gala.krobot.engine.level.entity.Level
-import com.gala.krobot.engine.program.entity.Token
 import com.gala.krobot.engine.levels.allLevels
+import com.gala.krobot.engine.program.entity.Token
 import kotlin.jvm.JvmInline
 
 class ProgramRobotController(
@@ -67,8 +68,8 @@ class ProgramRobotController(
             is Token.Statement.FunctionCall.Use -> {
                 val what = requireNotNull(call.what) { "use.what muse be set" }
                 when (val value = returningValue(what, parameters, variables)) {
-                    Value.Collect -> useKey(key = getKey())
-                    is Value.Key -> useKey(key = value.key)
+                    Value.Collect -> useKey(key = collectKey())
+                    is Value.CollectedKey -> useKey(key = value.key)
                     is Value.Number -> showCode(code = value.value)
                 }
             }
@@ -95,7 +96,7 @@ class ProgramRobotController(
         variables: FunctionMemory,
     ): Value =
         when (expression) {
-            Token.Get -> Value.Collect
+            Token.Get -> Value.CollectedKey(collectKey())
             is Token.ParameterUsage -> parameters.getValue(expression.name)
             is Token.VariableUsage -> variables.get(expression.name)
             is Token.Statement.FunctionCall.DefinedFunction -> {
@@ -142,7 +143,7 @@ class ProgramRobotController(
     }
 
     sealed interface Value {
-        data class Key(val key: String) : Value
+        data class CollectedKey(val key: Key) : Value
         data class Number(val value: Int) : Value
         data object Collect : Value
     }

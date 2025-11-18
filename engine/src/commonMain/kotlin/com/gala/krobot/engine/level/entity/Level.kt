@@ -101,6 +101,7 @@ fun parseLevel(draw: String): Level {
                 'f' -> blocks.add(TargetBlock(position))
                 '*' -> blocks.add(CheckCodeBlock(position))
                 '#' -> blocks.add(CheckKeyBlock(position))
+                'k' -> blocks.add(KeyBlock(position))
                 ' ' -> Unit // skip
                 else -> throw IllegalArgumentException("char can not be '$char' position=$position")
             }
