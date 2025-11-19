@@ -30,8 +30,10 @@ abstract class RobotController : RobotState.Source {
         }
     }
 
-    fun collectKey(): Key {
-        return currentState.collectKey()
+    suspend fun collectKey(): Key {
+        val key = currentState.collectKey()
+        updateState(currentState.withCollected(key))
+        return key
     }
 
     suspend fun useKey(key: Key) {

@@ -77,7 +77,7 @@ suspend fun showCode(code: Int) {
     globalRobotController.showCode(code)
 }
 
-fun getKey(): Key {
+suspend fun getKey(): Key {
     return globalRobotController.collectKey()
 }
 

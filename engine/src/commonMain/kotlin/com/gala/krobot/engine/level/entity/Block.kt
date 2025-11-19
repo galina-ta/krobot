@@ -1,9 +1,5 @@
 package com.gala.krobot.engine.level.entity
 
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.setValue
-
 sealed class Block(
     val position: Position,
 ) : RobotStateMutationsProvider, RobotState.Source {
@@ -42,7 +38,7 @@ sealed class Asset {
     data class Wall(val colorId: Int) : Asset()
     object Target : Asset()
     object CheckKey : Asset()
-    object Key : Asset()
+    class KeyIfNotCollected(val key: Key) : Asset()
     data class CheckCode(val code: Int) : Asset()
 }
 
@@ -75,7 +71,7 @@ class TargetBlock(position: Position) : Block(position) {
 
 
 open class CheckKeyBlock(position: Position) : Block(position) {
-    override val asset: Asset = Asset.CheckKey
+    override val asset = Asset.CheckKey
 
     override val requiresKey = true
 
@@ -106,14 +102,8 @@ class CheckCodeBlock(position: Position) : Block(position) {
 }
 
 class KeyBlock(position: Position) : Block(position) {
-    override var asset: Asset by mutableStateOf(Asset.Key)
-
-    private var key: Key? = Key(
-        collected = {
-            key = null
-            asset = Asset.Pass
-        },
-    )
+    private val key = Key()
+    override val asset = Asset.KeyIfNotCollected(key)
 
     override fun afterRobotMove(robotState: RobotState): RobotState? {
         return if (robotState.position == position && robotState.currentBlockCollectable == null)

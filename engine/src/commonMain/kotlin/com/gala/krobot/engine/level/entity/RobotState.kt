@@ -8,6 +8,7 @@ data class RobotState(
     val currentKey: Key? = null,
     val nextStepCode: Int? = null,
     val currentCode: Int? = null,
+    val collected: Set<Collectable> = emptySet(),
     val beforeMove: () -> Unit = {},
     val isWon: Boolean = false,
     val source: Source? = null,
@@ -69,13 +70,15 @@ data class RobotState(
     }
 
     fun collectKey(): Key {
-        return currentBlockCollectable
-            ?.also { it.collected() } as? Key
-            ?: throw NoKeyOnBlockException()
+        return currentBlockCollectable as? Key ?: throw NoKeyOnBlockException()
     }
 
     override fun toString(): String {
         return "$position finishReason=$finishReason from=${source?.sourceRepresentation()}"
+    }
+
+    fun withCollected(collectable: Collectable): RobotState {
+        return copy(collected = collected + collectable)
     }
 
     interface Source {

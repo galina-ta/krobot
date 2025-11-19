@@ -88,7 +88,7 @@ private fun BoxScope.Level(
             .background(Color.White)
     ) {
         level.blocks.forEach { block ->
-            Block(block, pointSize)
+            Block(block, robotState, pointSize)
         }
         Robot(
             state = robotState,
@@ -131,7 +131,11 @@ private fun Robot(state: RobotState, movesRight: Boolean, pointSize: Float) {
 }
 
 @Composable
-private fun Block(block: Block, pointSize: Float) {
+private fun Block(
+    block: Block,
+    robotState: RobotState,
+    pointSize: Float,
+) {
     Box(
         modifier = Modifier
             .size(block.size.render(pointSize))
@@ -142,9 +146,7 @@ private fun Block(block: Block, pointSize: Float) {
     ) {
         when (val asset = block.asset) {
             is Asset.Pass -> {
-                Box(
-                    modifier = Modifier.fillMaxSize().border(1.dp, color = Color.Black),
-                )
+                Border()
             }
 
             is Asset.Wall -> {
@@ -197,14 +199,22 @@ private fun Block(block: Block, pointSize: Float) {
                 )
             }
 
-            Asset.Key -> {
-                ResourceImage(
-                    resource = Res.drawable.key,
-                    modifier = Modifier.padding(all = 6.dp),
-                )
+            is Asset.KeyIfNotCollected -> {
+                Border()
+                if (asset.key !in robotState.collected) {
+                    ResourceImage(
+                        resource = Res.drawable.key,
+                        modifier = Modifier.padding(all = 6.dp),
+                    )
+                }
             }
         }
     }
+}
+
+@Composable
+private fun Border() {
+    Box(modifier = Modifier.fillMaxSize().border(1.dp, color = Color.Black))
 }
 
 @Composable
