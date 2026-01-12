@@ -45,10 +45,10 @@ private fun formatExpression(
     symbols: List<VisualSymbol>,
 ): String = symbols.joinToString(" ") { symbol ->
     when (symbol) {
-        VisualSymbol.Assign -> ", равным"
+        VisualSymbol.Assign -> ", которому присвоено значение"
         VisualSymbol.Bracket.Round.Open -> "c параметром"
-        VisualSymbol.Get -> "получить"
-        is VisualSymbol.Literal -> "числу ${symbol.value}"
+        VisualSymbol.Get -> "выданное функцией получить"
+        is VisualSymbol.Literal -> "${symbol.value}"
         is VisualSymbol.ParameterUsage -> symbol.name.name
         is VisualSymbol.VariableUsage -> symbol.name.name
         is VisualSymbol.Statement.FunctionCall.User -> symbol.name.name
