@@ -9,6 +9,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,19 +19,20 @@ import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.ComposeViewport
-import com.gala.krobot.engine.level.LevelViewModel
 import com.gala.krobot.engine.level.CreateRobotControllerHolder
+import com.gala.krobot.engine.level.LevelViewModel
 import com.gala.krobot.engine.level.entity.Level
 import com.gala.krobot.engine.level.entity.parseLevel
+import com.gala.krobot.engine.level.impls.RobotExecutorImpl
+import com.gala.krobot.engine.level.impls.RobotStatesApplierImpl
 import com.gala.krobot.engine.level.ui.LevelScreen
+import com.gala.krobot.engine.levels.demoLevel
 import com.gala.krobot.engine.program.LevelEditor
 import com.gala.krobot.engine.program.Program
 import com.gala.krobot.engine.program.ProgramRobotController
 import com.gala.krobot.engine.program.visual.VisualProgramEditorViewModel
+import com.gala.krobot.engine.program.visual.entity.toProgram
 import com.gala.krobot.engine.program.visual.ui.VisualProgramEditor
-import com.gala.krobot.engine.level.impls.RobotExecutorImpl
-import com.gala.krobot.engine.level.impls.RobotStatesApplierImpl
-import com.gala.krobot.engine.levels.demoLevel
 import com.gala.krobot.ui.theme.KrobotTheme
 import io.ktor.http.URLBuilder
 import io.ktor.http.parseUrl
@@ -101,10 +103,16 @@ private fun Main(
         val visualProgramEditorViewModel = remember {
             VisualProgramEditorViewModel(
                 levelName = levelName,
-                programUpdated = {
-                    program = it
+                programUpdated = { visualProgram ->
+                    printVisualProgram(visualProgram)
+                    program = visualProgram.toProgram()
                 }
             )
+        }
+        LaunchedEffect(visualProgramEditorViewModel) {
+            updateVisualProgram = { visualProgram ->
+                visualProgramEditorViewModel.programRestored(visualProgram)
+            }
         }
         Column(modifier = Modifier.padding(innerPadding)) {
             Box(modifier = Modifier.fillMaxWidth()) {

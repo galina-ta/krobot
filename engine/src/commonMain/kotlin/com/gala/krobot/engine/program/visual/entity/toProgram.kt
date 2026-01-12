@@ -14,11 +14,12 @@ fun VisualProgram.toProgram(): Program = Program(
                 val firstSymbol = line.symbols
                     .dropWhile { it == VisualSymbol.Space }
                     .firstOrNull()
+                val followingSymbols = line.symbols.drop(1)
                 when (firstSymbol) {
                     is VisualSymbol.Statement.FunctionCall.Move -> {
                         val stepCount = line
                             .parameterSymbol<VisualSymbol.Expression>()
-                            ?.toToken(line)
+                            ?.toToken(followingSymbols)
                         when (firstSymbol) {
                             VisualSymbol.Statement.FunctionCall.Move.Down ->
                                 Token.Statement.FunctionCall.Move.Down(stepCount)
@@ -41,21 +42,21 @@ fun VisualProgram.toProgram(): Program = Program(
                         val expressionSymbol = line.parameterSymbol<VisualSymbol.Expression>()
                         Token.Statement.FunctionCall.DefinedFunction(
                             name = firstSymbol.name.name,
-                            parameter = expressionSymbol?.toToken(line),
+                            parameter = expressionSymbol?.toToken(followingSymbols),
                         )
                     }
 
                     VisualSymbol.Statement.FunctionCall.Use -> {
                         val expressionSymbol = line.parameterSymbol<VisualSymbol.Expression>()
                         Token.Statement.FunctionCall.Use(
-                            what = expressionSymbol?.toToken(line)
+                            what = expressionSymbol?.toToken(followingSymbols)
                         )
                     }
 
                     VisualSymbol.Statement.Return -> {
                         val expressionSymbol = requireNotNull(line.firstExpression)
                         Token.Statement.Return(
-                            what = expressionSymbol.toToken(line),
+                            what = expressionSymbol.toToken(followingSymbols),
                         )
                     }
 
@@ -64,7 +65,7 @@ fun VisualProgram.toProgram(): Program = Program(
                         val expressionSymbol = requireNotNull(line.firstExpression)
                         Token.Statement.VariableDefinition(
                             name = identifier.name,
-                            value = expressionSymbol.toToken(line),
+                            value = expressionSymbol.toToken(followingSymbols),
                         )
                     }
 
@@ -88,7 +89,7 @@ fun VisualProgram.toProgram(): Program = Program(
 )
 
 private fun VisualSymbol.Expression.toToken(
-    line: VisualProgramLine,
+    followingSymbols: List<VisualSymbol>,
 ): Token.Expression = when (this) {
     VisualSymbol.Expression.Empty -> Token.Expression.Empty
     VisualSymbol.Get -> Token.Get
@@ -98,6 +99,8 @@ private fun VisualSymbol.Expression.toToken(
     is VisualSymbol.Statement.FunctionCall.User ->
         Token.Statement.FunctionCall.DefinedFunction(
             name = name.name,
-            parameter = line.parameterSymbol<VisualSymbol.Expression>()?.toToken(line)
+            parameter = followingSymbols.parameterSymbol<VisualSymbol.Expression>()?.toToken(
+                followingSymbols = followingSymbols.parameterSymbols()
+            )
         )
 }

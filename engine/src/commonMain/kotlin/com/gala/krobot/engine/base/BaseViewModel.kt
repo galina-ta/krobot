@@ -11,7 +11,7 @@ abstract class BaseViewModel<TViewState>(
     var state: TViewState by mutableStateOf(initialState)
         private set
 
-    fun updateState(update: TViewState.() -> TViewState) {
+    protected fun updateState(update: TViewState.() -> TViewState) {
         state = update(state)
     }
 }

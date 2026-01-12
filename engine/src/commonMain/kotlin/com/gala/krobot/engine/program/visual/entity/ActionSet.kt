@@ -26,7 +26,7 @@ data class ActionSet(
                 selectedLine.isFunctionDefinition -> listOfNotNull(
                     general(
                         canDefineVariable = true,
-                        canHaveParameter = true,
+                        canDefineParameter = true,
                         hasParameter = selectedLine.hasOpenedRoundBracket,
                         canReturn = true,
                     ),
@@ -52,7 +52,7 @@ data class ActionSet(
                 selectedLine.isFunctionCall -> listOfNotNull(
                     general(
                         canDefineVariable = true,
-                        canHaveParameter = true,
+                        canUseParameter = true,
                         hasParameter = selectedLine.hasOpenedRoundBracket,
                         canReturn = true,
                     ),
@@ -145,7 +145,8 @@ data class ActionSet(
         private fun general(
             canRemove: Boolean = true,
             canDefineVariable: Boolean = false,
-            canHaveParameter: Boolean = false,
+            canDefineParameter: Boolean = false,
+            canUseParameter: Boolean = false,
             hasParameter: Boolean = false,
             canReturn: Boolean = false,
         ): ActionSet =
@@ -154,8 +155,10 @@ data class ActionSet(
                 actions = listOfNotNull(
                     Action.AddFunctionDefinition,
                     Action.AddVariableDefinition.takeIf { canDefineVariable },
-                    Action.AddParameter.takeIf { canHaveParameter && !hasParameter },
-                    Action.RemoveParameter.takeIf { canHaveParameter && hasParameter },
+                    Action.AddParameterDefinition.takeIf { canDefineParameter && !hasParameter },
+                    Action.AddParameterUsage.takeIf { canUseParameter && !hasParameter },
+                    Action.RemoveParameter
+                        .takeIf { (canUseParameter || canDefineParameter) && hasParameter },
                     Action.AddReturnStatement.takeIf { canReturn },
                     Action.Remove.takeIf { canRemove },
                 )

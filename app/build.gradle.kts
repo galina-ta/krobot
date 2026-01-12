@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kotlinMultiplatform)
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeMultiplatform)
+    alias(libs.plugins.kotlinSerialization)
 }
 
 kotlin {
@@ -60,6 +61,7 @@ kotlin {
         wasmJsMain.dependencies {
             implementation(libs.kotlinxBrowser)
             implementation(libs.ktorClientCore)
+            implementation(libs.kotlinxSerializationJson)
         }
     }
 }

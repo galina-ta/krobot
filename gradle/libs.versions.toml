@@ -1,15 +1,16 @@
 [versions]
-agp = "8.13.0"
+agp = "8.13.1"
 kotlin = "2.2.21"
 coreKtx = "1.17.0"
 junit = "4.13.2"
 kotlinxBrowser = "0.5.0"
 kotlinxCoroutinesCore = "1.10.2"
 ktorClientCore = "3.3.2"
-lifecycleRuntimeKtx = "2.9.4"
+lifecycleRuntimeKtx = "2.10.0"
 composeMultiplatform = "1.9.3"
-activityCompose = "1.11.0"
-lifecycle = "2.9.4"
+activityCompose = "1.12.0"
+lifecycle = "2.10.0"
+kotlinxSerialization = "1.9.0"
 
 [libraries]
 androidxCoreKtx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -21,6 +22,7 @@ androidxUiToolingPreview = { group = "androidx.compose.ui", name = "ui-tooling-p
 androidxViewModelCompose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "lifecycle" }
 kotlinxBrowser = { module = "org.jetbrains.kotlinx:kotlinx-browser", version.ref = "kotlinxBrowser" }
 kotlinxCoroutinesCore = { module = "org.jetbrains.kotlinx:kotlinx-coroutines-core", version.ref = "kotlinxCoroutinesCore" }
+kotlinxSerializationJson = { module = "org.jetbrains.kotlinx:kotlinx-serialization-json", version.ref = "kotlinxSerialization" }
 ktorClientCore = { module = "io.ktor:ktor-client-core", version.ref = "ktorClientCore" }
 
 [plugins]

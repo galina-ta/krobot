@@ -1,15 +1,13 @@
 package com.gala.krobot.engine.program.visual
 
 import com.gala.krobot.engine.base.BaseViewModel
-import com.gala.krobot.engine.program.Program
 import com.gala.krobot.engine.program.visual.entity.Action
 import com.gala.krobot.engine.program.visual.entity.VisualProgram
 import com.gala.krobot.engine.program.visual.entity.VisualProgramLine
-import com.gala.krobot.engine.program.visual.entity.toProgram
 
 class VisualProgramEditorViewModel(
     levelName: String,
-    private val programUpdated: (Program) -> Unit,
+    private val programUpdated: (VisualProgram) -> Unit,
 ) : BaseViewModel<VisualProgramEditorState>(
     VisualProgramEditorState(
         program = VisualProgram.empty(levelName),
@@ -18,11 +16,15 @@ class VisualProgramEditorViewModel(
 ) {
     fun executeAction(action: Action) {
         updateState { copy(program = program.modified(action)) }
-        programUpdated(state.program.toProgram())
+        programUpdated(state.program)
     }
 
     fun selectLine(line: VisualProgramLine) {
         updateState { copy(program = program.withLineSelected(line)) }
+    }
+
+    fun programRestored(program: VisualProgram) {
+        updateState { copy(program = program) }
     }
 }
 

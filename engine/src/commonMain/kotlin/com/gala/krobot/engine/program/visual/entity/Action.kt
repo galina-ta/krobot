@@ -4,7 +4,8 @@ sealed interface Action {
     data object AddFunctionDefinition : Action
     data object AddVariableDefinition : Action
     data object AddReturnStatement : Action
-    data object AddParameter : Action
+    data object AddParameterDefinition : Action
+    data object AddParameterUsage : Action
     data object RemoveParameter : Action
 
     data class AddStatement(val statement: VisualSymbol.Statement) : Action

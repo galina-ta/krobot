@@ -169,8 +169,9 @@ private fun RowScope.Action(
         Action.AddVariableDefinition -> VisualSymbol.Statement.VariableDefinitionMarker
         Action.AddReturnStatement -> VisualSymbol.Statement.Return
 
-        Action.AddParameter,
-        Action.RemoveParameter -> VisualSymbol.Bracket.Round.Open
+        Action.AddParameterUsage,
+        Action.RemoveParameter,
+        Action.AddParameterDefinition -> VisualSymbol.Bracket.Round.Open
 
         is Action.AddStatement -> action.statement
         is Action.SetName -> action.name

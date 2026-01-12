@@ -1,5 +1,9 @@
 package com.gala.krobot.engine.program.visual.entity
 
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
+
+@Serializable
 data class VisualFunctionDefinition(
     val isSelected: Boolean,
     val lines: List<VisualProgramLine>,
@@ -28,11 +32,14 @@ data class VisualFunctionDefinition(
         ),
     )
 
+    @Transient
     val name = requireNotNull(lines.first { it.isFunctionDefinition }.firstIdentifier)
 
+    @Transient
     val parameterName: VisualSymbol.Identifier? =
         lines.first { it.isFunctionDefinition }.parameterSymbol()
 
+    @Transient
     val variableDefinitionNames: List<VisualSymbol.Identifier> =
         lines.mapNotNull { line ->
             line.firstIdentifier.takeIf { line.isVariableDefinition }
@@ -41,6 +48,7 @@ data class VisualFunctionDefinition(
     fun selectedLine(): VisualProgramLine? =
         lines.find { it.isSelected }
 
+    @Transient
     val hasReturnValue: Boolean =
         lines.any { it.isReturnStatement }
 

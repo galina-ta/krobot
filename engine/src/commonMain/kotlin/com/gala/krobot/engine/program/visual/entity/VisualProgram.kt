@@ -1,21 +1,27 @@
 package com.gala.krobot.engine.program.visual.entity
 
 import androidx.compose.runtime.Immutable
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 
 @Immutable
+@Serializable
 data class VisualProgram(
     val levelName: String,
     val functionDefinitions: List<VisualFunctionDefinition> = emptyList(),
 ) {
+    @Transient
     val flatLines = functionDefinitions.flatMap { it.lines }
 
+    @Transient
     val availableActionSets: List<ActionSet> = ActionSet.available(program = this)
 
     fun modified(action: Action): VisualProgram = when (action) {
         Action.AddFunctionDefinition -> withNewFunction()
         Action.AddVariableDefinition -> withVariableDefinition()
         Action.AddReturnStatement -> withReturnStatement()
-        Action.AddParameter -> withParameter()
+        Action.AddParameterDefinition -> withParameterDefinition()
+        Action.AddParameterUsage -> withParameterUsage()
         Action.RemoveParameter -> withoutParameter()
         is Action.AddStatement -> withSingleStatement(action.statement)
         is Action.SetExpression -> withExpression(action.expression)
@@ -147,7 +153,27 @@ data class VisualProgram(
             })
         })
 
-    private fun withParameter(): VisualProgram =
+    private fun withParameterDefinition(): VisualProgram =
+        mapFunctionDefinition(selected = { old ->
+            old.mapLine(selected = { line ->
+                line.copy(
+                    symbols = line.symbols.flatMap { symbol ->
+                        if (symbol is VisualSymbol.Identifier || symbol is VisualSymbol.Statement) {
+                            listOf(
+                                symbol,
+                                VisualSymbol.Bracket.Round.Open,
+                                VisualSymbol.Identifier.Undefined,
+                                VisualSymbol.Bracket.Round.Close,
+                            )
+                        } else {
+                            listOf(symbol)
+                        }
+                    }
+                )
+            })
+        })
+
+    private fun withParameterUsage(): VisualProgram =
         mapFunctionDefinition(selected = { old ->
             old.mapLine(selected = { line ->
                 line.copy(
