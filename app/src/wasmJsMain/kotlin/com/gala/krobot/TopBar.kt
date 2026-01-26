@@ -1,6 +1,7 @@
 package com.gala.krobot
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Button
@@ -14,10 +15,14 @@ import androidx.compose.ui.unit.dp
 fun TopBar(
     router: Router,
     levelEditorRequested: () -> Unit,
+    currentProgramString: () -> String,
+    programRestored: (String) -> Unit,
 ) {
-    Box(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 6.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
         Button(
-            modifier = Modifier.padding(start = 6.dp, top = 6.dp),
             onClick = {
                 router.navigate(
                     route = when (router.currentRoute) {
@@ -37,12 +42,17 @@ fun TopBar(
                 }
             )
         }
-        Button(
-            modifier = Modifier
-                .padding(end = 6.dp, top = 6.dp)
-                .align(Alignment.CenterEnd),
-            onClick = levelEditorRequested,
-        ) {
+
+        if (router.currentRoute == Route.Robot.CodeEditor) {
+            SaveRestoreCode(
+                currentProgramString = currentProgramString,
+                programRestored = programRestored,
+            )
+        }
+
+        Spacer(Modifier.weight(1f))
+
+        Button(onClick = levelEditorRequested) {
             Text(text = "Редактор уровня")
         }
     }

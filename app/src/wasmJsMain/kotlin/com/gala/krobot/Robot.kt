@@ -54,7 +54,18 @@ fun Robot(
         Column(modifier = Modifier.padding(innerPadding)) {
             TopBar(
                 router = router,
-                levelEditorRequested = levelEditorRequested
+                levelEditorRequested = levelEditorRequested,
+                currentProgramString = {
+                    encodeProgram(visualProgramEditorViewModel.state.program)
+                },
+                programRestored = { programString ->
+                    try {
+                        val program = decodeProgram(programString)
+                        visualProgramEditorViewModel.programRestored(program)
+                    } catch (e: Exception) {
+                        e.printStackTrace()
+                    }
+                },
             )
             when (currentRoute) {
                 Route.Robot.Level -> {
