@@ -25,6 +25,7 @@ class VisualProgramEditorViewModel(
 
     fun programRestored(program: VisualProgram) {
         updateState { copy(program = program) }
+        programUpdated(state.program)
     }
 }
 
