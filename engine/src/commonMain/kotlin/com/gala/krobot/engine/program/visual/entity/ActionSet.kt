@@ -85,7 +85,7 @@ data class ActionSet(
                     ),
                 )
 
-                else -> throw IllegalStateException("incorrect selectedLine")
+                else -> throw IllegalStateException("incorrect selectedLine, selectedLine=$selectedLine")
             }
         }
 

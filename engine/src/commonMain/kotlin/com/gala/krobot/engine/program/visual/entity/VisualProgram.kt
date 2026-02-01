@@ -229,7 +229,7 @@ data class VisualProgram(
             old.mapLine(selected = { line ->
                 line.copy(
                     symbols = line.symbols.map { symbol ->
-                        if (symbol is VisualSymbol.Expression)
+                        if (symbol.isExpression(line))
                             expression
                         else
                             symbol
@@ -237,6 +237,18 @@ data class VisualProgram(
                 )
             })
         })
+
+    // Is an expression in the current context. It's important for user function calls.
+    private fun VisualSymbol.isExpression(line: VisualProgramLine): Boolean {
+        if (this !is VisualSymbol.Expression) return false
+        if (this !is VisualSymbol.Statement.FunctionCall.User) return true
+        var roundBracketOpened = false
+        line.symbols.forEach { symbol ->
+            if (symbol == VisualSymbol.Bracket.Round.Open) roundBracketOpened = true
+            if (symbol === this) return roundBracketOpened
+        }
+        throw IllegalArgumentException("expression is not in the line, expression=$this, line=$line")
+    }
 
     private fun withoutSelected(): VisualProgram {
         val selectedDefinition = requireNotNull(selectedFunctionDefinition())
