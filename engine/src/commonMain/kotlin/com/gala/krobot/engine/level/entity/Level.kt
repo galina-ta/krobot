@@ -5,10 +5,6 @@ data class Level(
     private val nonVoidBlocks: List<Block>,
 ) : RobotStateMutationsProvider, RobotState.Source {
 
-    private val maxKeyUsage: Int = nonVoidBlocks.count { it.requiresKey }
-
-    private var usedKeyPositions = mutableSetOf<Position>()
-
     val size = Size.Virtual(
         width = nonVoidBlocks.maxByOrNull { block -> block.horEnd }?.horEnd ?: 1.vp,
         height = nonVoidBlocks.maxByOrNull { block -> block.verEnd }?.verEnd ?: 1.vp
@@ -35,12 +31,6 @@ data class Level(
     }
 
     override fun beforeRobotMove(robotState: RobotState): RobotState? {
-        if (robotState.currentKey != null) {
-            usedKeyPositions.add(robotState.position)
-            require(usedKeyPositions.size <= maxKeyUsage) {
-                "Key could be used not more than $maxKeyUsage times"
-            }
-        }
         if (!robotState.position.isIn(size)) {
             return robotState.destroyed().withSource(source = this)
         } else {
