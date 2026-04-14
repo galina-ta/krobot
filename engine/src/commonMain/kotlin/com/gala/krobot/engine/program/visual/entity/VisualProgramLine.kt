@@ -31,6 +31,10 @@ data class VisualProgramLine(
         symbols.any { it is VisualSymbol.Statement.Return }
 
     @Transient
+    val isCondition: Boolean =
+        symbols.any { it is VisualSymbol.ConditionMarker }
+
+    @Transient
     val firstIdentifier: VisualSymbol.Identifier? =
         symbols.filterIsInstance<VisualSymbol.Identifier>().firstOrNull()
 
@@ -58,6 +62,12 @@ data class VisualProgramLine(
                     VisualSymbol.Identifier.Key,
                 )
 
+            VisualSymbol.Statement.FunctionCall.Equal ->
+                listOf(
+                    VisualSymbol.Identifier.What,
+                    VisualSymbol.Identifier.To,
+                )
+
             is VisualSymbol.Statement.FunctionCall.User -> {
                 val definition = definitions.find { it.name == functionCall.name }
                 listOfNotNull(definition?.parameterName)
@@ -65,6 +75,24 @@ data class VisualProgramLine(
 
             is VisualSymbol.Statement.FunctionCall.SetLevel,
             null -> emptyList()
+        }
+    }
+
+    fun functionParametersCount(definitions: List<VisualFunctionDefinition>): Int {
+        val functionCall = symbols
+            .filterIsInstance<VisualSymbol.Statement.FunctionCall>()
+            .firstOrNull()
+        return when (functionCall) {
+            is VisualSymbol.Statement.FunctionCall.Move -> 1
+            is VisualSymbol.Statement.FunctionCall.Use -> 1
+            VisualSymbol.Statement.FunctionCall.Equal -> 2
+
+            is VisualSymbol.Statement.FunctionCall.User -> {
+                val definition = definitions.find { it.name == functionCall.name }
+                if (definition?.parameterName != null) 1 else 0
+            }
+
+            is VisualSymbol.Statement.FunctionCall.SetLevel, null -> 0
         }
     }
 

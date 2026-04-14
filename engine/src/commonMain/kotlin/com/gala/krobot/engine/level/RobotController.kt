@@ -17,7 +17,7 @@ abstract class RobotController : RobotState.Source {
     suspend fun setLevel(level: Level) {
         this.level = level
         onLevelSet(level)
-        updateState(level.initialRobotState)
+        updateState(level.newRobotState())
     }
 
     private lateinit var currentState: RobotState

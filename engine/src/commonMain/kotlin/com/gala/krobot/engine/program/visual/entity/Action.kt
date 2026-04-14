@@ -2,10 +2,11 @@ package com.gala.krobot.engine.program.visual.entity
 
 sealed interface Action {
     data object AddFunctionDefinition : Action
+    data object AddCondition : Action
     data object AddVariableDefinition : Action
     data object AddReturnStatement : Action
     data object AddParameterDefinition : Action
-    data object AddParameterUsage : Action
+    data class AddParameterUsage(val count: Int) : Action
     data object RemoveParameter : Action
 
     data class AddStatement(val statement: VisualSymbol.Statement) : Action

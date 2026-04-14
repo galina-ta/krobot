@@ -19,9 +19,10 @@ data class VisualProgram(
     fun modified(action: Action): VisualProgram = when (action) {
         Action.AddFunctionDefinition -> withNewFunction()
         Action.AddVariableDefinition -> withVariableDefinition()
+        Action.AddCondition -> withCondition()
         Action.AddReturnStatement -> withReturnStatement()
         Action.AddParameterDefinition -> withParameterDefinition()
-        Action.AddParameterUsage -> withParameterUsage()
+        is Action.AddParameterUsage -> withParameterUsage(count = action.count)
         Action.RemoveParameter -> withoutParameter()
         is Action.AddStatement -> withSingleStatement(action.statement)
         is Action.SetExpression -> withExpression(action.expression)
@@ -72,6 +73,26 @@ data class VisualProgram(
                 VisualSymbol.Expression.Empty,
             )
         )
+    }
+
+    private fun withCondition(): VisualProgram {
+        return lineAfterSelected { definitionIndex ->
+            newSelectedLine(
+                functionDefinitionIndex = definitionIndex,
+                symbols = listOf(
+                    VisualSymbol.ConditionMarker,
+                    VisualSymbol.Expression.Empty,
+                    VisualSymbol.Bracket.Curly.Open,
+                )
+            )
+        }.lineAfterSelected { definitionIndex ->
+            VisualProgramLine(
+                isSelectable = false,
+                functionDefinitionIndex = definitionIndex,
+                symbols = listOf(VisualSymbol.Space) + VisualSymbol.Bracket.Curly.Close,
+                isSelected = false,
+            )
+        }
     }
 
     private fun withSingleStatement(statement: VisualSymbol.Statement): VisualProgram =
@@ -173,7 +194,29 @@ data class VisualProgram(
             })
         })
 
-    private fun withParameterUsage(): VisualProgram =
+    private fun withParameterUsage(count: Int): VisualProgram =
+        mapFunctionDefinition(selected = { old ->
+            old.mapLine(selected = { line ->
+                line.copy(
+                    symbols = line.symbols.flatMap { symbol ->
+                        if (symbol is VisualSymbol.Identifier || symbol is VisualSymbol.Statement) {
+                            listOf(
+                                symbol,
+                                VisualSymbol.Bracket.Round.Open,
+                                VisualSymbol.Identifier.Undefined,
+                                VisualSymbol.Assign,
+                                VisualSymbol.Expression.Empty,
+                                VisualSymbol.Bracket.Round.Close,
+                            )
+                        } else {
+                            listOf(symbol)
+                        }
+                    }
+                )
+            })
+        })
+
+    private fun withParameter2Usage(): VisualProgram =
         mapFunctionDefinition(selected = { old ->
             old.mapLine(selected = { line ->
                 line.copy(

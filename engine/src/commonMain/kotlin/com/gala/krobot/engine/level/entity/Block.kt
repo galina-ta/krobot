@@ -40,6 +40,8 @@ sealed class Asset {
     object CheckKey : Asset()
     class KeyIfNotCollected(val key: Key) : Asset()
     data class CheckCode(val code: Int) : Asset()
+    data class ConditionalLock(val number: Int) : Asset()
+    data class ConditionalOpenedLockNumber(val number: Int) : Asset()
 }
 
 class VoidBlock(position: Position) : Block(position) {
@@ -107,7 +109,44 @@ class KeyBlock(position: Position) : Block(position) {
 
     override fun afterRobotMove(robotState: RobotState): RobotState? {
         return if (robotState.position == position && robotState.currentBlockCollectable == null)
-            robotState.withGettable(key)
+            robotState.withCollectable(key)
+        else
+            null
+    }
+}
+
+class ConditionalLockBlock(
+    position: Position,
+    number: Int,
+) : Block(position) {
+    override val asset = Asset.ConditionalLock(number)
+
+    override fun beforeRobotMove(robotState: RobotState): RobotState? {
+        return if (
+            robotState.position == position &&
+            robotState.currentBlockCollectable != robotState.openedConditionalLockNumber
+        ) {
+            robotState.destroyed().withSource(source = this)
+        } else {
+            null
+        }
+    }
+}
+
+class ConditionalOpenedLockNumberBlock(
+    position: Position,
+) : Block(position) {
+    private lateinit var number: Number
+
+    override val asset: Asset get() = Asset.ConditionalOpenedLockNumber(number.value)
+
+    override fun afterRobotStateCreate(robotState: RobotState) {
+        number = robotState.openedConditionalLockNumber!!
+    }
+
+    override fun afterRobotMove(robotState: RobotState): RobotState? {
+        return if (robotState.position == position && robotState.currentBlockCollectable == null)
+            robotState.withCollectable(number)
         else
             null
     }

@@ -52,7 +52,9 @@ data class ActionSet(
                 selectedLine.isFunctionCall -> listOfNotNull(
                     general(
                         canDefineVariable = true,
-                        canUseParameter = true,
+                        parametersCount = selectedLine.functionParametersCount(
+                            program.functionDefinitions,
+                        ),
                         hasParameter = selectedLine.hasOpenedRoundBracket,
                         canReturn = true,
                     ),
@@ -73,6 +75,19 @@ data class ActionSet(
                 )
 
                 selectedLine.isReturnStatement -> listOfNotNull(
+                    general(
+                        canDefineVariable = true,
+                        canReturn = true,
+                    ),
+                    statements(program),
+                    expressions(
+                        parameterNames = listOfNotNull(selectedFunction.parameterName),
+                        variableDefinitionNames = selectedFunction.variableDefinitionNames,
+                        functionDefinitions = program.functionDefinitions,
+                    ),
+                )
+
+                selectedLine.isCondition -> listOfNotNull(
                     general(
                         canDefineVariable = true,
                         canReturn = true,
@@ -117,7 +132,7 @@ data class ActionSet(
                 levelName = program.levelName,
             ).map { call ->
                 Action.AddStatement(statement = call)
-            }
+            } + Action.AddCondition
         )
 
         private fun expressions(
@@ -146,7 +161,7 @@ data class ActionSet(
             canRemove: Boolean = true,
             canDefineVariable: Boolean = false,
             canDefineParameter: Boolean = false,
-            canUseParameter: Boolean = false,
+            parametersCount: Int = 0,
             hasParameter: Boolean = false,
             canReturn: Boolean = false,
         ): ActionSet =
@@ -156,9 +171,12 @@ data class ActionSet(
                     Action.AddFunctionDefinition,
                     Action.AddVariableDefinition.takeIf { canDefineVariable },
                     Action.AddParameterDefinition.takeIf { canDefineParameter && !hasParameter },
-                    Action.AddParameterUsage.takeIf { canUseParameter && !hasParameter },
+                    if (parametersCount != 0 && !hasParameter)
+                        Action.AddParameterUsage(parametersCount)
+                    else
+                        null,
                     Action.RemoveParameter
-                        .takeIf { (canUseParameter || canDefineParameter) && hasParameter },
+                        .takeIf { (parametersCount != 0 || canDefineParameter) && hasParameter },
                     Action.AddReturnStatement.takeIf { canReturn },
                     Action.Remove.takeIf { canRemove },
                 )

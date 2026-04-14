@@ -12,7 +12,8 @@ sealed interface VisualSymbol {
         data object Empty : Expression
 
         companion object {
-            private fun allBuiltIn(): List<Expression> = listOf(Get) + Literal.all()
+            private fun allBuiltIn(): List<Expression> =
+                listOf(Get, Statement.FunctionCall.Equal) + Literal.all()
 
             fun all(
                 parameterNames: List<Identifier>,
@@ -30,6 +31,9 @@ sealed interface VisualSymbol {
 
     @[Serializable SerialName("functionDefinitionMarker")]
     data object FunctionDefinitionMarker : VisualSymbol
+
+    @[Serializable SerialName("if")]
+    data object ConditionMarker : VisualSymbol
 
     @Serializable
     sealed interface Statement : VisualSymbol {
@@ -62,6 +66,9 @@ sealed interface VisualSymbol {
 
             @[Serializable SerialName("use")]
             data object Use : FunctionCall
+
+            @[Serializable SerialName("equal")]
+            data object Equal : FunctionCall, Expression
 
             @[Serializable SerialName("user")]
             data class User(val name: Identifier) : FunctionCall, Expression
@@ -165,6 +172,16 @@ sealed interface VisualSymbol {
         @[Serializable SerialName("stepCount")]
         data object StepCount : Identifier {
             override val name = "раз"
+        }
+
+        @[Serializable SerialName("what")]
+        data object What : Identifier {
+            override val name = "что"
+        }
+
+        @[Serializable SerialName("to")]
+        data object To : Identifier {
+            override val name = "чему"
         }
 
         @[Serializable SerialName("undefined")]
