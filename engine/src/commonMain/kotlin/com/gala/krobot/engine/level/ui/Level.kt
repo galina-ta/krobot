@@ -208,6 +208,28 @@ private fun Block(
                     )
                 }
             }
+
+            is Asset.ConditionalLock -> {
+                ResourceImage(
+                    modifier = Modifier.alpha(0.7f),
+                    resource = Res.drawable.password_texture,
+                )
+                ScaledText(
+                    text = asset.number.toString(),
+                    scale = 0.7f,
+                    color = Color(0xFF0000FF),
+                    pointSize = pointSize,
+                )
+            }
+
+            is Asset.ConditionalOpenedLockNumber -> {
+                ScaledText(
+                    text = asset.number.toString(),
+                    scale = 0.7f,
+                    color = Color(0xFF0000FF),
+                    pointSize = pointSize,
+                )
+            }
         }
     }
 }

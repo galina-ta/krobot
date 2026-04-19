@@ -4,13 +4,13 @@ data class ActionSet(
     val type: Type,
     val actions: List<Action>
 ) {
-    enum class Type {
-        General,
-        SetFunctionDefinitionName,
-        SetVariableDefinitionName,
-        SetParameterName,
-        UseExpression,
-        AddStatement,
+    sealed interface Type {
+        object General : Type
+        object SetFunctionDefinitionName : Type
+        object SetVariableDefinitionName : Type
+        data class SetParameterName(val index: Int) : Type
+        data class UseExpression(val index: Int) : Type
+        object AddStatement : Type
     }
 
     companion object {
@@ -49,28 +49,38 @@ data class ActionSet(
                     ),
                 )
 
-                selectedLine.isFunctionCall -> listOfNotNull(
-                    general(
-                        canDefineVariable = true,
-                        canUseParameter = true,
-                        hasParameter = selectedLine.hasOpenedRoundBracket,
-                        canReturn = true,
-                    ),
-                    statements(program),
-                    *if (selectedLine.hasOpenedRoundBracket)
-                        arrayOf(
-                            callParameterName(
-                                selectedLine.functionParameterNames(program.functionDefinitions)
-                            ),
-                            expressions(
-                                parameterNames = listOfNotNull(selectedFunction.parameterName),
-                                variableDefinitionNames = selectedFunction.variableDefinitionNames,
-                                functionDefinitions = program.functionDefinitions,
+                selectedLine.isFunctionCall -> {
+                    val parametersCount =
+                        selectedLine.functionParametersCount(program.functionDefinitions)
+                    listOfNotNull(
+                        general(
+                            canDefineVariable = true,
+                            parametersCount = parametersCount,
+                            hasParameter = selectedLine.hasOpenedRoundBracket,
+                            canReturn = true,
+                        ),
+                        statements(program),
+                        *if (selectedLine.hasOpenedRoundBracket)
+                            arrayOf(
+                                *(0..<parametersCount).map { index ->
+                                    callParameterName(
+                                        index,
+                                        selectedLine.functionParameterNames(program.functionDefinitions)
+                                    )
+                                }.toTypedArray(),
+                                *(0..<parametersCount).map { index ->
+                                    expressions(
+                                        parameterNames = listOfNotNull(selectedFunction.parameterName),
+                                        variableDefinitionNames = selectedFunction.variableDefinitionNames,
+                                        functionDefinitions = program.functionDefinitions,
+                                        index = index,
+                                    )
+                                }.toTypedArray()
                             )
-                        )
-                    else
-                        emptyArray(),
-                )
+                        else
+                            emptyArray(),
+                    )
+                }
 
                 selectedLine.isReturnStatement -> listOfNotNull(
                     general(
@@ -83,6 +93,29 @@ data class ActionSet(
                         variableDefinitionNames = selectedFunction.variableDefinitionNames,
                         functionDefinitions = program.functionDefinitions,
                     ),
+                )
+
+                selectedLine.isCondition -> listOfNotNull(
+                    general(
+                        canDefineVariable = true,
+                        canReturn = true,
+                    ),
+                    statements(program),
+                    expressions(
+                        parameterNames = listOfNotNull(selectedFunction.parameterName),
+                        variableDefinitionNames = selectedFunction.variableDefinitionNames,
+                        functionDefinitions = program.functionDefinitions,
+                    ),
+                )
+
+                selectedLine.isBlockEnd -> listOfNotNull(
+                    general(
+                        canDefineVariable = true,
+                        canDefineParameter = true,
+                        hasParameter = selectedLine.hasOpenedRoundBracket,
+                        canReturn = true,
+                    ),
+                    statements(program),
                 )
 
                 else -> throw IllegalStateException("incorrect selectedLine, selectedLine=$selectedLine")
@@ -104,9 +137,10 @@ data class ActionSet(
         )
 
         private val parameterDefinitionIdentifiers = ActionSet(
-            type = Type.SetParameterName,
+            // Multiple definition parameters are unsupported for now
+            type = Type.SetParameterName(index = 0),
             actions = VisualSymbol.Identifier.User.all().map { identifier ->
-                Action.SetName.Parameter(identifier)
+                Action.SetName.Parameter(identifier, index = 0)
             }
         )
 
@@ -117,28 +151,30 @@ data class ActionSet(
                 levelName = program.levelName,
             ).map { call ->
                 Action.AddStatement(statement = call)
-            }
+            } + Action.AddCondition
         )
 
         private fun expressions(
             parameterNames: List<VisualSymbol.Identifier>,
             variableDefinitionNames: List<VisualSymbol.Identifier>,
             functionDefinitions: List<VisualFunctionDefinition>,
+            index: Int = 0,
         ) = ActionSet(
-            type = Type.UseExpression,
+            type = Type.UseExpression(index),
             actions = VisualSymbol.Expression
                 .all(parameterNames, variableDefinitionNames, functionDefinitions)
                 .map {
-                    Action.SetExpression(expression = it)
+                    Action.SetExpression(expression = it, index)
                 }
         )
 
         private fun callParameterName(
+            index: Int,
             parameterNames: List<VisualSymbol.Identifier>
         ) = ActionSet(
-            type = Type.SetParameterName,
+            type = Type.SetParameterName(index),
             actions = parameterNames.map { identifier ->
-                Action.SetName.Parameter(identifier)
+                Action.SetName.Parameter(identifier, index)
             }
         )
 
@@ -146,7 +182,7 @@ data class ActionSet(
             canRemove: Boolean = true,
             canDefineVariable: Boolean = false,
             canDefineParameter: Boolean = false,
-            canUseParameter: Boolean = false,
+            parametersCount: Int = 0,
             hasParameter: Boolean = false,
             canReturn: Boolean = false,
         ): ActionSet =
@@ -156,9 +192,12 @@ data class ActionSet(
                     Action.AddFunctionDefinition,
                     Action.AddVariableDefinition.takeIf { canDefineVariable },
                     Action.AddParameterDefinition.takeIf { canDefineParameter && !hasParameter },
-                    Action.AddParameterUsage.takeIf { canUseParameter && !hasParameter },
+                    if (parametersCount != 0 && !hasParameter)
+                        Action.AddParameterUsage(parametersCount)
+                    else
+                        null,
                     Action.RemoveParameter
-                        .takeIf { (canUseParameter || canDefineParameter) && hasParameter },
+                        .takeIf { (parametersCount != 0 || canDefineParameter) && hasParameter },
                     Action.AddReturnStatement.takeIf { canReturn },
                     Action.Remove.takeIf { canRemove },
                 )

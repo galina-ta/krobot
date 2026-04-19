@@ -48,6 +48,7 @@ private fun formatExpression(
         VisualSymbol.Assign -> ", которому присвоено значение"
         VisualSymbol.Bracket.Round.Open -> "c параметром"
         VisualSymbol.Get -> "выданное функцией получить"
+        VisualSymbol.Statement.FunctionCall.Equal -> "выданное функцией сравнения"
         is VisualSymbol.Literal -> "${symbol.value}"
         is VisualSymbol.ParameterUsage -> symbol.name.name
         is VisualSymbol.VariableUsage -> symbol.name.name
@@ -59,14 +60,16 @@ private fun formatExpression(
         VisualSymbol.Statement.FunctionCall.Move.Up -> "движение вверх"
         is VisualSymbol.Statement.FunctionCall.SetLevel -> "установки уровня ${symbol.name}"
         VisualSymbol.Statement.FunctionCall.Use -> "применить"
+        VisualSymbol.ConditionMarker -> "если"
 
         VisualSymbol.Expression.Empty,
         VisualSymbol.Bracket.Round.Close,
-        VisualSymbol.Space -> ""
+        VisualSymbol.Space,
+        is VisualSymbol.Bracket.Curly,
+        VisualSymbol.Comma -> ""
 
         VisualSymbol.Statement.VariableDefinitionMarker,
         VisualSymbol.Statement.Return,
-        is VisualSymbol.Bracket.Curly,
         VisualSymbol.Remove,
         VisualSymbol.FunctionDefinitionMarker ->
             throw IllegalArgumentException("$symbol can not be in an expression")

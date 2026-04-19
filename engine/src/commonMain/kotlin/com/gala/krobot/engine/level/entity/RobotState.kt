@@ -8,6 +8,7 @@ data class RobotState(
     val currentKey: Key? = null,
     val nextStepCode: Int? = null,
     val currentCode: Int? = null,
+    val openedConditionalLockNumber: Number? = null,
     val collected: Set<Collectable> = emptySet(),
     val beforeMove: () -> Unit = {},
     val isWon: Boolean = false,
@@ -65,8 +66,13 @@ data class RobotState(
         return copy(source = source)
     }
 
-    fun withGettable(collectable: Collectable?): RobotState {
+    fun withCollectable(collectable: Collectable?): RobotState {
         return copy(currentBlockCollectable = collectable)
+    }
+
+    fun withRandomOpenedConditionalLockNumber(conditionalLocksCount: Int): RobotState {
+        val number = Number(value = (1..conditionalLocksCount).random())
+        return copy(openedConditionalLockNumber = number)
     }
 
     fun collectKey(): Key {

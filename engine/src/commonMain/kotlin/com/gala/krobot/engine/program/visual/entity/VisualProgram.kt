@@ -19,17 +19,18 @@ data class VisualProgram(
     fun modified(action: Action): VisualProgram = when (action) {
         Action.AddFunctionDefinition -> withNewFunction()
         Action.AddVariableDefinition -> withVariableDefinition()
+        Action.AddCondition -> withCondition()
         Action.AddReturnStatement -> withReturnStatement()
         Action.AddParameterDefinition -> withParameterDefinition()
-        Action.AddParameterUsage -> withParameterUsage()
+        is Action.AddParameterUsage -> withParameterUsage(count = action.count)
         Action.RemoveParameter -> withoutParameter()
         is Action.AddStatement -> withSingleStatement(action.statement)
-        is Action.SetExpression -> withExpression(action.expression)
+        is Action.SetExpression -> withExpression(action.expression, action.index)
 
         is Action.SetName.FunctionDefinition,
         is Action.SetName.VariableDefinition -> withMainName(action.name)
 
-        is Action.SetName.Parameter -> withParameterName(action.name)
+        is Action.SetName.Parameter -> withParameterName(action.name, action.index)
 
         Action.Remove -> withoutSelected()
     }
@@ -74,6 +75,26 @@ data class VisualProgram(
         )
     }
 
+    private fun withCondition(): VisualProgram {
+        return lineAfterSelected { definitionIndex ->
+            newSelectedLine(
+                functionDefinitionIndex = definitionIndex,
+                symbols = listOf(
+                    VisualSymbol.ConditionMarker,
+                    VisualSymbol.Expression.Empty,
+                    VisualSymbol.Bracket.Curly.Open,
+                )
+            )
+        }.lineAfterSelected { definitionIndex ->
+            VisualProgramLine(
+                isSelectable = true,
+                functionDefinitionIndex = definitionIndex,
+                symbols = listOf(VisualSymbol.Space) + VisualSymbol.Bracket.Curly.Close,
+                isSelected = false,
+            )
+        }
+    }
+
     private fun withSingleStatement(statement: VisualSymbol.Statement): VisualProgram =
         lineAfterSelected { definitionIndex ->
             newSelectedLine(definitionIndex, listOf(statement))
@@ -92,20 +113,28 @@ data class VisualProgram(
     ): VisualProgram {
         val selectedDefinition = requireNotNull(selectedFunctionDefinition())
         val selectedLine = requireNotNull(selectedDefinition.selectedLine())
+        val selectedDefinitionIndex = functionDefinitions.indexOf(selectedDefinition)
+        require(selectedDefinitionIndex >= 0) { "selectedDefinition not found in functionDefinitions" }
+        val newLine = addLine(selectedDefinitionIndex)
         return copy(
-            functionDefinitions = functionDefinitions.mapIndexed { definitionIndex, definition ->
+            functionDefinitions = functionDefinitions.map { definition ->
                 if (definition === selectedDefinition) {
                     definition.copy(
                         isSelected = true,
                         lines = definition.lines.flatMap { line ->
                             if (line === selectedLine) {
                                 listOf(
-                                    line.unselected(),
-                                    addLine(definitionIndex),
+                                    if (newLine.isSelected) line.unselected() else line,
+                                    when {
+                                        newLine.isBlockEnd -> newLine
+                                        line.isBlockBegin -> newLine.indented(line.indent + 1)
+                                        line.indent != 0 -> newLine.indented(line.indent)
+                                        else -> newLine
+                                    },
                                 )
                             } else {
                                 listOf(
-                                    line.unselected()
+                                    if (newLine.isSelected) line.unselected() else line
                                 )
                             }
                         }
@@ -134,20 +163,23 @@ data class VisualProgram(
             })
         })
 
-    private fun withParameterName(identifier: VisualSymbol.Identifier): VisualProgram =
+    private fun withParameterName(identifier: VisualSymbol.Identifier, index: Int): VisualProgram =
         mapFunctionDefinition(selected = { old ->
             old.mapLine(selected = { line ->
                 var roundBracketOpened = false
+                var identifierIndex = 0
                 line.copy(
                     symbols = line.symbols
                         .map { symbol ->
                             if (symbol is VisualSymbol.Bracket.Round.Open) {
                                 roundBracketOpened = true
                             }
-                            if (roundBracketOpened && symbol is VisualSymbol.Identifier)
-                                identifier
-                            else
-                                symbol
+                            if (!roundBracketOpened || symbol !is VisualSymbol.Identifier) {
+                                return@map symbol
+                            }
+                            val newSymbol = if (identifierIndex == index) identifier else symbol
+                            identifierIndex++
+                            newSymbol
                         }
                 )
             })
@@ -173,7 +205,7 @@ data class VisualProgram(
             })
         })
 
-    private fun withParameterUsage(): VisualProgram =
+    private fun withParameterUsage(count: Int): VisualProgram =
         mapFunctionDefinition(selected = { old ->
             old.mapLine(selected = { line ->
                 line.copy(
@@ -182,9 +214,16 @@ data class VisualProgram(
                             listOf(
                                 symbol,
                                 VisualSymbol.Bracket.Round.Open,
-                                VisualSymbol.Identifier.Undefined,
-                                VisualSymbol.Assign,
-                                VisualSymbol.Expression.Empty,
+                                *buildList {
+                                    repeat(count) { index ->
+                                        if (index != 0) {
+                                            add(VisualSymbol.Comma)
+                                        }
+                                        add(VisualSymbol.Identifier.Undefined)
+                                        add(VisualSymbol.Assign)
+                                        add(VisualSymbol.Expression.Empty)
+                                    }
+                                }.toTypedArray(),
                                 VisualSymbol.Bracket.Round.Close,
                             )
                         } else {
@@ -224,29 +263,31 @@ data class VisualProgram(
             })
         })
 
-    private fun withExpression(expression: VisualSymbol.Expression): VisualProgram =
+    private fun withExpression(expression: VisualSymbol.Expression, index: Int): VisualProgram =
         mapFunctionDefinition(selected = { old ->
             old.mapLine(selected = { line ->
+                var expressionIndex = 0
                 line.copy(
                     symbols = line.symbols.map { symbol ->
-                        if (symbol.isExpression(line))
-                            expression
-                        else
-                            symbol
+                        if (!symbol.isExpression(line)) return@map symbol
+                        val newExpression = if (expressionIndex == index) expression else symbol
+                        expressionIndex++
+                        newExpression
                     }
                 )
             })
         })
 
-    // Is an expression in the current context. It's important for user function calls.
+    // Is an expression in the current context. It's important for function calls with parameters.
     private fun VisualSymbol.isExpression(line: VisualProgramLine): Boolean {
         if (this !is VisualSymbol.Expression) return false
-        if (this !is VisualSymbol.Statement.FunctionCall.User) return true
+        if (line.functionParametersCount(functionDefinitions) == 0) return true
         var roundBracketOpened = false
         line.symbols.forEach { symbol ->
             if (symbol == VisualSymbol.Bracket.Round.Open) roundBracketOpened = true
             if (symbol === this) return roundBracketOpened
         }
+        if (!roundBracketOpened) return true
         throw IllegalArgumentException("expression is not in the line, expression=$this, line=$line")
     }
 
@@ -273,12 +314,31 @@ data class VisualProgram(
 
             else -> mapFunctionDefinition(selected = { old ->
                 val lineIndex = old.lines.indexOf(selectedLine)
+                var inCondition = false
                 old.copy(
                     lines = old.lines.mapIndexedNotNull { index, line ->
                         when (index) {
                             lineIndex - 1 -> line.copy(isSelected = true)
-                            lineIndex -> null
-                            else -> line
+                            lineIndex -> {
+                                inCondition = true
+                                null
+                            }
+
+                            else -> {
+                                if (inCondition) {
+                                    null
+                                } else {
+                                    line
+                                }.also {
+                                    if (inCondition &&
+                                        line.symbols
+                                            .dropWhile { it == VisualSymbol.Space }
+                                            .firstOrNull() == VisualSymbol.Bracket.Curly.Close
+                                    ) {
+                                        inCondition = false
+                                    }
+                                }
+                            }
                         }
                     }
                 )

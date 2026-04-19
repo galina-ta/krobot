@@ -9,6 +9,7 @@ data class VisualProgramLine(
     val functionDefinitionIndex: Int,
     val symbols: List<VisualSymbol>,
     val isSelected: Boolean,
+    val indent: Int = 0,
 ) {
     @Transient
     val isFunctionDefinition: Boolean =
@@ -29,6 +30,18 @@ data class VisualProgramLine(
     @Transient
     val isReturnStatement: Boolean =
         symbols.any { it is VisualSymbol.Statement.Return }
+
+    @Transient
+    val isCondition: Boolean =
+        symbols.any { it is VisualSymbol.ConditionMarker }
+
+    @Transient
+    val isBlockEnd: Boolean =
+        symbols.dropWhile { it == VisualSymbol.Space }
+            .firstOrNull() == VisualSymbol.Bracket.Curly.Close
+
+    @Transient
+    val isBlockBegin: Boolean = isCondition
 
     @Transient
     val firstIdentifier: VisualSymbol.Identifier? =
@@ -58,6 +71,12 @@ data class VisualProgramLine(
                     VisualSymbol.Identifier.Key,
                 )
 
+            VisualSymbol.Statement.FunctionCall.Equal ->
+                listOf(
+                    VisualSymbol.Identifier.What,
+                    VisualSymbol.Identifier.To,
+                )
+
             is VisualSymbol.Statement.FunctionCall.User -> {
                 val definition = definitions.find { it.name == functionCall.name }
                 listOfNotNull(definition?.parameterName)
@@ -68,5 +87,28 @@ data class VisualProgramLine(
         }
     }
 
+    fun functionParametersCount(definitions: List<VisualFunctionDefinition>): Int {
+        val functionCall = symbols
+            .filterIsInstance<VisualSymbol.Statement.FunctionCall>()
+            .firstOrNull()
+        return when (functionCall) {
+            is VisualSymbol.Statement.FunctionCall.Move -> 1
+            is VisualSymbol.Statement.FunctionCall.Use -> 1
+            VisualSymbol.Statement.FunctionCall.Equal -> 2
+
+            is VisualSymbol.Statement.FunctionCall.User -> {
+                val definition = definitions.find { it.name == functionCall.name }
+                if (definition?.parameterName != null) 1 else 0
+            }
+
+            is VisualSymbol.Statement.FunctionCall.SetLevel, null -> 0
+        }
+    }
+
     fun unselected() = if (isSelected) copy(isSelected = false) else this
+
+    fun indented(indent: Int): VisualProgramLine = copy(
+        indent = indent,
+        symbols = (0..<indent).map { VisualSymbol.Space } + symbols,
+    )
 }

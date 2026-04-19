@@ -1,7 +1,7 @@
 package com.gala.krobot.engine.level.entity
 
 data class Level(
-    val initialRobotState: RobotState,
+    private val initialRobotState: RobotState,
     private val nonVoidBlocks: List<Block>,
 ) : RobotStateMutationsProvider, RobotState.Source {
 
@@ -16,6 +16,14 @@ data class Level(
             val block = nonVoidBlocks.find { it.position == currentPosition }
             block ?: VoidBlock(position = currentPosition)
         }
+    }
+
+    private val conditionalLocksCount = blocks.count { it is ConditionalLockBlock }
+
+    fun newRobotState(): RobotState {
+        val state = initialRobotState.withRandomOpenedConditionalLockNumber(conditionalLocksCount)
+        blocks.forEach { it.afterRobotStateCreate(state) }
+        return state
     }
 
     fun blockOn(position: Position): Block? {
@@ -80,6 +88,7 @@ data class Level(
  * ' ': pass
  */
 fun parseLevel(draw: String): Level {
+    var nextConditionalLockNumber = 1
     var initialRobotPosition: Position? = null
     val blocks = mutableListOf<Block>()
     draw.lines().forEachIndexed { lineIndex, line ->
@@ -92,6 +101,14 @@ fun parseLevel(draw: String): Level {
                 '*' -> blocks.add(CheckCodeBlock(position))
                 '#' -> blocks.add(CheckKeyBlock(position))
                 'k' -> blocks.add(KeyBlock(position))
+                '?' -> blocks.add(
+                    ConditionalLockBlock(
+                        position,
+                        number = nextConditionalLockNumber.also { nextConditionalLockNumber++ }
+                    )
+                )
+
+                'o' -> blocks.add(ConditionalOpenedLockNumberBlock(position))
                 ' ' -> Unit // skip
                 else -> throw IllegalArgumentException("char can not be '$char' position=$position")
             }

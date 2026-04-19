@@ -2,21 +2,26 @@ package com.gala.krobot.engine.program.visual.entity
 
 sealed interface Action {
     data object AddFunctionDefinition : Action
+    data object AddCondition : Action
     data object AddVariableDefinition : Action
     data object AddReturnStatement : Action
     data object AddParameterDefinition : Action
-    data object AddParameterUsage : Action
+    data class AddParameterUsage(val count: Int) : Action
     data object RemoveParameter : Action
 
     data class AddStatement(val statement: VisualSymbol.Statement) : Action
-    data class SetExpression(val expression: VisualSymbol.Expression) : Action
+    data class SetExpression(val expression: VisualSymbol.Expression, val index: Int) : Action
 
     sealed interface SetName : Action {
         val name: VisualSymbol.Identifier
 
         data class FunctionDefinition(override val name: VisualSymbol.Identifier) : SetName
         data class VariableDefinition(override val name: VisualSymbol.Identifier) : SetName
-        data class Parameter(override val name: VisualSymbol.Identifier) : SetName
+
+        data class Parameter(
+            override val name: VisualSymbol.Identifier,
+            val index: Int,
+        ) : SetName
     }
 
     data object Remove : Action

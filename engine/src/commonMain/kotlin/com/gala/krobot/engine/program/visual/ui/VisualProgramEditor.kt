@@ -61,7 +61,7 @@ fun VisualProgramEditor(
                 Row {
                     Row(
                         modifier = Modifier
-                            .width(400.dp)
+                            .width(500.dp)
                             .then(
                                 if (line.isSelected)
                                     Modifier.background(Color(0xFF82B1FF))
@@ -133,8 +133,8 @@ private fun Keyboard(
                         ActionSet.Type.General -> "добавить"
                         ActionSet.Type.SetFunctionDefinitionName -> "имя функции"
                         ActionSet.Type.SetVariableDefinitionName -> "имя переменной"
-                        ActionSet.Type.SetParameterName -> "имя параметра"
-                        ActionSet.Type.UseExpression -> "использовать"
+                        is ActionSet.Type.SetParameterName -> "имя параметра ${set.type.index}"
+                        is ActionSet.Type.UseExpression -> "использовать ${set.type.index}"
                         ActionSet.Type.AddStatement -> "вызвать"
                     },
                     color = Color.Black,
@@ -169,7 +169,7 @@ private fun RowScope.Action(
         Action.AddVariableDefinition -> VisualSymbol.Statement.VariableDefinitionMarker
         Action.AddReturnStatement -> VisualSymbol.Statement.Return
 
-        Action.AddParameterUsage,
+        is Action.AddParameterUsage,
         Action.RemoveParameter,
         Action.AddParameterDefinition -> VisualSymbol.Bracket.Round.Open
 
@@ -178,6 +178,7 @@ private fun RowScope.Action(
 
         is Action.SetExpression -> action.expression
         Action.Remove -> VisualSymbol.Remove
+        Action.AddCondition -> VisualSymbol.ConditionMarker
     }
     Symbol(
         modifier = symbolModifier,
@@ -200,6 +201,7 @@ private fun RowScope.Symbol(
     fun TextSymbol(
         text: String,
         isDefinition: Boolean = false,
+        textAlign: TextAlign? = TextAlign.Center,
         textModifier: Modifier = Modifier,
     ) {
         val isLong = text.length > 1
@@ -220,7 +222,7 @@ private fun RowScope.Symbol(
             text = text,
             fontWeight = if (isDefinition) FontWeight.Bold else null,
             color = if (isDefinition) Color.Red else Color.Black,
-            textAlign = TextAlign.Center,
+            textAlign = textAlign,
             style = TextStyle(
                 textDecoration = if (lineThrough) TextDecoration.LineThrough else null,
                 fontFamily = if (!isLong)
@@ -265,7 +267,7 @@ private fun RowScope.Symbol(
 
         is VisualSymbol.Statement.FunctionCall.SetLevel -> TextSymbol("уровень $levelName")
 
-        VisualSymbol.Bracket.Curly.Close -> TextSymbol("}")
+        VisualSymbol.Bracket.Curly.Close -> TextSymbol("}", textAlign = TextAlign.Start)
         VisualSymbol.Bracket.Curly.Open -> TextSymbol("{")
         VisualSymbol.Bracket.Round.Close -> TextSymbol(")")
         VisualSymbol.Bracket.Round.Open -> TextSymbol("(")
@@ -279,6 +281,7 @@ private fun RowScope.Symbol(
 
         VisualSymbol.Get -> ImageSymbol(Res.drawable.get)
         VisualSymbol.Statement.FunctionCall.Use -> ImageSymbol(Res.drawable.use)
+        VisualSymbol.Statement.FunctionCall.Equal -> TextSymbol("равно")
 
         VisualSymbol.Statement.Return ->
             ImageSymbol(
@@ -286,6 +289,9 @@ private fun RowScope.Symbol(
                 imageModifier = Modifier.rotate(90f)
             )
 
+        VisualSymbol.Comma -> TextSymbol(",")
+
+        VisualSymbol.ConditionMarker -> TextSymbol("если")
         VisualSymbol.Assign -> TextSymbol("=")
         VisualSymbol.Remove -> TextSymbol("удалить")
 
