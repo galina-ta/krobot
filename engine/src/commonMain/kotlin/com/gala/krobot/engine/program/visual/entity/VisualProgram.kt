@@ -312,7 +312,7 @@ data class VisualProgram(
                 )
             }
 
-            else -> mapFunctionDefinition(selected = { old ->
+            selectedLine.isCondition -> mapFunctionDefinition(selected = { old ->
                 val lineIndex = old.lines.indexOf(selectedLine)
                 var inCondition = false
                 old.copy(
@@ -339,6 +339,19 @@ data class VisualProgram(
                                     }
                                 }
                             }
+                        }
+                    }
+                )
+            })
+
+            else -> mapFunctionDefinition(selected = { old ->
+                val lineIndex = old.lines.indexOf(selectedLine)
+                old.copy(
+                    lines = old.lines.mapIndexedNotNull { index, line ->
+                        when (index) {
+                            lineIndex - 1 -> line.copy(isSelected = true)
+                            lineIndex -> null
+                            else -> line
                         }
                     }
                 )

@@ -2,6 +2,7 @@
 
 package com.gala.krobot.engine.level
 
+import com.gala.krobot.engine.level.entity.Collectable
 import com.gala.krobot.engine.level.entity.Key
 import com.gala.krobot.engine.level.entity.Level
 import com.gala.krobot.engine.level.entity.Position
@@ -30,10 +31,10 @@ abstract class RobotController : RobotState.Source {
         }
     }
 
-    suspend fun collectKey(): Key {
-        val key = currentState.collectKey()
-        updateState(currentState.withCollected(key))
-        return key
+    suspend fun collect(): Collectable {
+        val collectable = currentState.collect()
+        updateState(currentState.withCollected(collectable))
+        return collectable
     }
 
     suspend fun useKey(key: Key) {

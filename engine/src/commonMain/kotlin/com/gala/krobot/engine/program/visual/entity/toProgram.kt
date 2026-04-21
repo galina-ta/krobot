@@ -2,6 +2,8 @@ package com.gala.krobot.engine.program.visual.entity
 
 import com.gala.krobot.engine.program.Program
 import com.gala.krobot.engine.program.entity.Token
+import com.gala.krobot.engine.program.entity.Token.Equal
+import com.gala.krobot.engine.program.entity.Token.Statement.Condition
 import com.gala.krobot.engine.program.entity.Token.Statement.FunctionCall.DefinedFunction
 import com.gala.krobot.engine.program.entity.Token.Statement.FunctionCall.Move.Down
 import com.gala.krobot.engine.program.entity.Token.Statement.FunctionCall.Move.Left
@@ -19,87 +21,120 @@ fun VisualProgram.toProgram(): Program = Program(
             name = identifier.name,
             parameterName = definition.parameterName?.name,
             isMain = identifier == VisualSymbol.Identifier.Run,
-            statements = definition.lines.drop(1).mapNotNull { line ->
-                val firstSymbol = line.symbols
-                    .dropWhile { it == VisualSymbol.Space }
-                    .firstOrNull()
-                val followingSymbols = line.symbols.drop(1)
-                when (firstSymbol) {
-                    is VisualSymbol.Statement.FunctionCall.Move -> {
-                        val stepCount = line
-                            .parameterSymbol<VisualSymbol.Expression>()
-                            ?.toToken(followingSymbols)
-                        when (firstSymbol) {
-                            VisualSymbol.Statement.FunctionCall.Move.Down ->
-                                Down(stepCount)
-
-                            VisualSymbol.Statement.FunctionCall.Move.Left ->
-                                Left(stepCount)
-
-                            VisualSymbol.Statement.FunctionCall.Move.Right ->
-                                Right(stepCount)
-
-                            VisualSymbol.Statement.FunctionCall.Move.Up ->
-                                Up(stepCount)
-                        }
-                    }
-
-                    is VisualSymbol.Statement.FunctionCall.SetLevel ->
-                        SetLevel(firstSymbol.name)
-
-                    is VisualSymbol.Statement.FunctionCall.User -> {
-                        val expressionSymbol = line.parameterSymbol<VisualSymbol.Expression>()
-                        DefinedFunction(
-                            name = firstSymbol.name.name,
-                            parameter = expressionSymbol?.toToken(followingSymbols),
-                        )
-                    }
-
-                    VisualSymbol.Statement.FunctionCall.Use -> {
-                        val expressionSymbol = line.parameterSymbol<VisualSymbol.Expression>()
-                        Use(
-                            what = expressionSymbol?.toToken(followingSymbols)
-                        )
-                    }
-
-                    VisualSymbol.Statement.Return -> {
-                        val expressionSymbol = requireNotNull(line.firstExpression)
-                        Return(
-                            what = expressionSymbol.toToken(followingSymbols),
-                        )
-                    }
-
-                    VisualSymbol.Statement.VariableDefinitionMarker -> {
-                        val identifier = requireNotNull(line.firstIdentifier)
-                        val expressionSymbol = requireNotNull(line.firstExpression)
-                        VariableDefinition(
-                            name = identifier.name,
-                            value = expressionSymbol.toToken(followingSymbols),
-                        )
-                    }
-
-                    is VisualSymbol.Bracket.Curly,
-                    is VisualSymbol.Bracket.Round,
-                    is VisualSymbol.FunctionDefinitionMarker,
-                    is VisualSymbol.Identifier,
-                    is VisualSymbol.ParameterUsage,
-                    is VisualSymbol.VariableUsage,
-                    is VisualSymbol.Literal,
-                    VisualSymbol.Expression.Empty,
-                    VisualSymbol.Get,
-                    VisualSymbol.Assign,
-                    VisualSymbol.Remove,
-                    VisualSymbol.Space,
-                    VisualSymbol.Comma,
-                    null -> null
-
-                    VisualSymbol.ConditionMarker -> null // TODO
-                    VisualSymbol.Statement.FunctionCall.Equal -> null // TODO
-                }
-            }
+            statements = getStatements(definition.lines.drop(1)),
         )
     }
 )
+
+private fun getStatements(lines: List<VisualProgramLine>): List<Token.Statement> = buildList {
+    var lineIndex = 0
+    while (lineIndex < lines.size) {
+        val line = lines[lineIndex]
+        val firstSymbol = line.symbols
+            .dropWhile { it == VisualSymbol.Space }
+            .firstOrNull()
+        val followingSymbols = line.symbols.drop(1)
+        when (firstSymbol) {
+            is VisualSymbol.Statement.FunctionCall.Move -> {
+                val stepCount = line
+                    .parameterSymbol<VisualSymbol.Expression>(0)
+                    ?.toToken(followingSymbols)
+                add(
+                    when (firstSymbol) {
+                        VisualSymbol.Statement.FunctionCall.Move.Down ->
+                            Down(stepCount)
+
+                        VisualSymbol.Statement.FunctionCall.Move.Left ->
+                            Left(stepCount)
+
+                        VisualSymbol.Statement.FunctionCall.Move.Right ->
+                            Right(stepCount)
+
+                        VisualSymbol.Statement.FunctionCall.Move.Up ->
+                            Up(stepCount)
+                    }
+                )
+            }
+
+            is VisualSymbol.Statement.FunctionCall.SetLevel ->
+                add(SetLevel(firstSymbol.name))
+
+            is VisualSymbol.Statement.FunctionCall.User -> {
+                val expressionSymbol = line.parameterSymbol<VisualSymbol.Expression>(0)
+                add(
+                    DefinedFunction(
+                        name = firstSymbol.name.name,
+                        parameter = expressionSymbol?.toToken(followingSymbols),
+                    )
+                )
+            }
+
+            VisualSymbol.Statement.FunctionCall.Use -> {
+                val expressionSymbol = line.parameterSymbol<VisualSymbol.Expression>(0)
+                add(
+                    Use(
+                        what = expressionSymbol?.toToken(followingSymbols)
+                    )
+                )
+            }
+
+            VisualSymbol.Statement.Return -> {
+                val expressionSymbol = requireNotNull(line.firstExpression)
+                add(
+                    Return(
+                        what = expressionSymbol.toToken(followingSymbols),
+                    )
+                )
+            }
+
+            VisualSymbol.Statement.VariableDefinitionMarker -> {
+                val identifier = requireNotNull(line.firstIdentifier)
+                val expressionSymbol = requireNotNull(line.firstExpression)
+                add(
+                    VariableDefinition(
+                        name = identifier.name,
+                        value = expressionSymbol.toToken(followingSymbols),
+                    )
+                )
+            }
+
+            VisualSymbol.ConditionMarker -> {
+                val predicate = requireNotNull(line.firstExpression)
+                lineIndex++
+                var blockLine = lines[lineIndex]
+                val blockLines = mutableListOf<VisualProgramLine>()
+                while (!blockLine.isBlockEnd) {
+                    blockLines.add(blockLine)
+                    lineIndex++
+                    blockLine = lines[lineIndex]
+                }
+                add(
+                    Condition(
+                        predicate = predicate.toToken(followingSymbols),
+                        statements = getStatements(blockLines)
+                    )
+                )
+            }
+
+            is VisualSymbol.Bracket.Curly,
+            is VisualSymbol.Bracket.Round,
+            is VisualSymbol.FunctionDefinitionMarker,
+            is VisualSymbol.Identifier,
+            is VisualSymbol.ParameterUsage,
+            is VisualSymbol.VariableUsage,
+            is VisualSymbol.Literal,
+            VisualSymbol.Expression.Empty,
+            VisualSymbol.Get,
+            VisualSymbol.Assign,
+            VisualSymbol.Remove,
+            VisualSymbol.Space,
+            VisualSymbol.Comma,
+            VisualSymbol.Equal,
+            null -> Unit
+        }
+        lineIndex++
+    }
+}
 
 private fun VisualSymbol.Expression.toToken(
     followingSymbols: List<VisualSymbol>,
@@ -112,10 +147,21 @@ private fun VisualSymbol.Expression.toToken(
     is VisualSymbol.Statement.FunctionCall.User ->
         DefinedFunction(
             name = name.name,
-            parameter = followingSymbols.parameterSymbol<VisualSymbol.Expression>()?.toToken(
+            parameter = followingSymbols.parameterSymbol<VisualSymbol.Expression>(0)?.toToken(
                 followingSymbols = followingSymbols.parameterSymbols()
             )
         )
 
-    VisualSymbol.Statement.FunctionCall.Equal -> TODO()
+    VisualSymbol.Equal -> Equal(
+        what = requireNotNull(
+            followingSymbols.parameterSymbol<VisualSymbol.Expression>(0)?.toToken(
+                followingSymbols = followingSymbols.parameterSymbols()
+            )
+        ),
+        to = requireNotNull(
+            followingSymbols.parameterSymbol<VisualSymbol.Expression>(1)?.toToken(
+                followingSymbols = followingSymbols.parameterSymbols()
+            )
+        )
+    )
 }

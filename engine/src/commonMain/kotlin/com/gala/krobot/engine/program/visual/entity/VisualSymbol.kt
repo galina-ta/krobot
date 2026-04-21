@@ -13,7 +13,7 @@ sealed interface VisualSymbol {
 
         companion object {
             private fun allBuiltIn(): List<Expression> =
-                listOf(Get, Statement.FunctionCall.Equal) + Literal.all()
+                listOf(Get, Equal) + Literal.all()
 
             fun all(
                 parameterNames: List<Identifier>,
@@ -70,9 +70,6 @@ sealed interface VisualSymbol {
             @[Serializable SerialName("use")]
             data object Use : FunctionCall
 
-            @[Serializable SerialName("equal")]
-            data object Equal : FunctionCall, Expression
-
             @[Serializable SerialName("user")]
             data class User(val name: Identifier) : FunctionCall, Expression
 
@@ -109,6 +106,9 @@ sealed interface VisualSymbol {
 
     @[Serializable SerialName("get")]
     data object Get : Expression
+
+    @[Serializable SerialName("equal")]
+    data object Equal : Expression
 
     @[Serializable SerialName("variableUsage")]
     data class VariableUsage(val name: Identifier) : Expression
@@ -296,8 +296,8 @@ sealed interface VisualSymbol {
     data object Remove : VisualSymbol
 }
 
-inline fun <reified T : VisualSymbol> List<VisualSymbol>.parameterSymbol(): T? =
-    parameterSymbols().filterIsInstance<T>().firstOrNull()
+inline fun <reified T : VisualSymbol> List<VisualSymbol>.parameterSymbol(index: Int): T? =
+    parameterSymbols().filterIsInstance<T>().getOrNull(index)
 
 fun List<VisualSymbol>.parameterSymbols(): List<VisualSymbol> {
     val parameterSymbols = mutableListOf<VisualSymbol>()

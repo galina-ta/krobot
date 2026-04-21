@@ -37,7 +37,7 @@ data class VisualFunctionDefinition(
 
     @Transient
     val parameterName: VisualSymbol.Identifier? =
-        lines.first { it.isFunctionDefinition }.parameterSymbol()
+        lines.first { it.isFunctionDefinition }.parameterSymbol(0)
 
     @Transient
     val variableDefinitionNames: List<VisualSymbol.Identifier> =

@@ -51,8 +51,8 @@ data class VisualProgramLine(
     val firstExpression: VisualSymbol.Expression? =
         symbols.filterIsInstance<VisualSymbol.Expression>().firstOrNull()
 
-    inline fun <reified T : VisualSymbol> parameterSymbol(): T? {
-        return symbols.parameterSymbol()
+    inline fun <reified T : VisualSymbol> parameterSymbol(index: Int): T? {
+        return symbols.parameterSymbol(index)
     }
 
     fun functionParameterNames(
@@ -71,7 +71,7 @@ data class VisualProgramLine(
                     VisualSymbol.Identifier.Key,
                 )
 
-            VisualSymbol.Statement.FunctionCall.Equal ->
+            VisualSymbol.Equal ->
                 listOf(
                     VisualSymbol.Identifier.What,
                     VisualSymbol.Identifier.To,
@@ -94,7 +94,7 @@ data class VisualProgramLine(
         return when (functionCall) {
             is VisualSymbol.Statement.FunctionCall.Move -> 1
             is VisualSymbol.Statement.FunctionCall.Use -> 1
-            VisualSymbol.Statement.FunctionCall.Equal -> 2
+            VisualSymbol.Equal -> 2
 
             is VisualSymbol.Statement.FunctionCall.User -> {
                 val definition = definitions.find { it.name == functionCall.name }

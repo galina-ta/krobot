@@ -50,10 +50,6 @@ data class RobotState(
         return copy(nextStepKey = key)
     }
 
-    fun getKey(): Key {
-        return currentKey ?: throw NoKeyCollectedException()
-    }
-
     fun withBeforeMove(beforeMove: () -> Unit): RobotState {
         return copy(beforeMove = beforeMove)
     }
@@ -75,8 +71,8 @@ data class RobotState(
         return copy(openedConditionalLockNumber = number)
     }
 
-    fun collectKey(): Key {
-        return currentBlockCollectable as? Key ?: throw NoKeyOnBlockException()
+    fun collect(): Collectable {
+        return currentBlockCollectable ?: throw NoKeyOnBlockException()
     }
 
     override fun toString(): String {
@@ -106,5 +102,3 @@ class RobotException : RuntimeException {
 }
 
 class NoKeyOnBlockException : IllegalStateException("There is no key on the current block")
-
-class NoKeyCollectedException : IllegalStateException("Key is not collected")

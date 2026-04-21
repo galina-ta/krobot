@@ -223,12 +223,14 @@ private fun Block(
             }
 
             is Asset.ConditionalOpenedLockNumber -> {
-                ScaledText(
-                    text = asset.number.toString(),
-                    scale = 0.7f,
-                    color = Color(0xFF0000FF),
-                    pointSize = pointSize,
-                )
+                if (asset.number !in robotState.collected) {
+                    ScaledText(
+                        text = asset.number.value.toString(),
+                        scale = 0.7f,
+                        color = Color(0xFF0000FF),
+                        pointSize = pointSize,
+                    )
+                }
             }
         }
     }

@@ -281,7 +281,7 @@ private fun RowScope.Symbol(
 
         VisualSymbol.Get -> ImageSymbol(Res.drawable.get)
         VisualSymbol.Statement.FunctionCall.Use -> ImageSymbol(Res.drawable.use)
-        VisualSymbol.Statement.FunctionCall.Equal -> TextSymbol("равно")
+        VisualSymbol.Equal -> TextSymbol("равно")
 
         VisualSymbol.Statement.Return ->
             ImageSymbol(

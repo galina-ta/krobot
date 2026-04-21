@@ -48,7 +48,7 @@ private fun formatExpression(
         VisualSymbol.Assign -> ", которому присвоено значение"
         VisualSymbol.Bracket.Round.Open -> "c параметром"
         VisualSymbol.Get -> "выданное функцией получить"
-        VisualSymbol.Statement.FunctionCall.Equal -> "выданное функцией сравнения"
+        VisualSymbol.Equal -> "выданное функцией сравнения"
         is VisualSymbol.Literal -> "${symbol.value}"
         is VisualSymbol.ParameterUsage -> symbol.name.name
         is VisualSymbol.VariableUsage -> symbol.name.name

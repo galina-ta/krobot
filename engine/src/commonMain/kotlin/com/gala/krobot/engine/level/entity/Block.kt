@@ -41,7 +41,7 @@ sealed class Asset {
     class KeyIfNotCollected(val key: Key) : Asset()
     data class CheckCode(val code: Int) : Asset()
     data class ConditionalLock(val number: Int) : Asset()
-    data class ConditionalOpenedLockNumber(val number: Int) : Asset()
+    data class ConditionalOpenedLockNumber(val number: Number) : Asset()
 }
 
 class VoidBlock(position: Position) : Block(position) {
@@ -124,7 +124,7 @@ class ConditionalLockBlock(
     override fun beforeRobotMove(robotState: RobotState): RobotState? {
         return if (
             robotState.position == position &&
-            robotState.currentBlockCollectable != robotState.openedConditionalLockNumber
+            requireNotNull(robotState.openedConditionalLockNumber) !in robotState.collected
         ) {
             robotState.destroyed().withSource(source = this)
         } else {
@@ -138,7 +138,7 @@ class ConditionalOpenedLockNumberBlock(
 ) : Block(position) {
     private lateinit var number: Number
 
-    override val asset: Asset get() = Asset.ConditionalOpenedLockNumber(number.value)
+    override val asset: Asset get() = Asset.ConditionalOpenedLockNumber(number)
 
     override fun afterRobotStateCreate(robotState: RobotState) {
         number = robotState.openedConditionalLockNumber!!

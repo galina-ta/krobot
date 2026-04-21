@@ -33,6 +33,11 @@ sealed interface Token {
             val value: Expression,
         ) : Statement
 
+        data class Condition(
+            val predicate: Expression,
+            val statements: List<Statement>,
+        ) : Statement
+
         data class Return(val what: Expression) : Statement
     }
 
@@ -43,6 +48,8 @@ sealed interface Token {
     data class Literal(val value: Int) : Expression
 
     data object Get : Expression
+
+    data class Equal(val what: Expression, val to: Expression) : Expression
 
     data class FunctionDefinition(
         val name: String,
