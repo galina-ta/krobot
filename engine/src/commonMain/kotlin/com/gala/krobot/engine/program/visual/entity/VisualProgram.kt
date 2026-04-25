@@ -111,8 +111,12 @@ data class VisualProgram(
     private fun lineAfterSelected(
         addLine: (definitionIndex: Int) -> VisualProgramLine,
     ): VisualProgram {
-        val selectedDefinition = requireNotNull(selectedFunctionDefinition())
-        val selectedLine = requireNotNull(selectedDefinition.selectedLine())
+        val selectedDefinition = requireNotNull(selectedFunctionDefinition()) {
+            "selectedDefinition must not be null when inserting a line after selected"
+        }
+        val selectedLine = requireNotNull(selectedDefinition.selectedLine()) {
+            "selectedLine must not be null when inserting a line after selected"
+        }
         val selectedDefinitionIndex = functionDefinitions.indexOf(selectedDefinition)
         require(selectedDefinitionIndex >= 0) { "selectedDefinition not found in functionDefinitions" }
         val newLine = addLine(selectedDefinitionIndex)
@@ -210,7 +214,7 @@ data class VisualProgram(
             old.mapLine(selected = { line ->
                 line.copy(
                     symbols = line.symbols.flatMap { symbol ->
-                        if (symbol is VisualSymbol.Identifier || symbol is VisualSymbol.Statement) {
+                        if (symbol is VisualSymbol.Identifier || symbol is VisualSymbol.FunctionCall) {
                             listOf(
                                 symbol,
                                 VisualSymbol.Bracket.Round.Open,
@@ -292,8 +296,12 @@ data class VisualProgram(
     }
 
     private fun withoutSelected(): VisualProgram {
-        val selectedDefinition = requireNotNull(selectedFunctionDefinition())
-        val selectedLine = requireNotNull(selectedDefinition.selectedLine())
+        val selectedDefinition = requireNotNull(selectedFunctionDefinition()) {
+            "selectedDefinition must not be null when removing selected"
+        }
+        val selectedLine = requireNotNull(selectedDefinition.selectedLine()) {
+            "selectedLine must not be null when removing selected"
+        }
         return when {
             selectedLine.isFunctionDefinition -> {
                 var selectedSet = false
@@ -384,7 +392,9 @@ private inline fun VisualProgram.mapFunctionDefinition(
     unselected: (old: VisualFunctionDefinition) -> VisualFunctionDefinition = { it },
     selected: (old: VisualFunctionDefinition) -> VisualFunctionDefinition,
 ): VisualProgram {
-    val selectedDefinition = requireNotNull(selectedFunctionDefinition())
+    val selectedDefinition = requireNotNull(selectedFunctionDefinition()) {
+        "selectedDefinition must not be null in map definition"
+    }
     return copy(
         functionDefinitions = functionDefinitions.map { definition ->
             if (definition === selectedDefinition)

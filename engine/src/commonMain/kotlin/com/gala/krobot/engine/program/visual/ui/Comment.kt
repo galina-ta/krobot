@@ -47,19 +47,19 @@ private fun formatExpression(
     when (symbol) {
         VisualSymbol.Assign -> ", которому присвоено значение"
         VisualSymbol.Bracket.Round.Open -> "c параметром"
-        VisualSymbol.Get -> "выданное функцией получить"
-        VisualSymbol.Equal -> "выданное функцией сравнения"
+        VisualSymbol.FunctionCall.Get -> "выданное функцией получить"
+        VisualSymbol.FunctionCall.Equal -> "выданное функцией сравнения"
         is VisualSymbol.Literal -> "${symbol.value}"
         is VisualSymbol.ParameterUsage -> symbol.name.name
         is VisualSymbol.VariableUsage -> symbol.name.name
-        is VisualSymbol.Statement.FunctionCall.User -> symbol.name.name
+        is VisualSymbol.FunctionCall.User -> symbol.name.name
         is VisualSymbol.Identifier -> symbol.name
-        VisualSymbol.Statement.FunctionCall.Move.Down -> "движение вниз"
-        VisualSymbol.Statement.FunctionCall.Move.Left -> "движение влево"
-        VisualSymbol.Statement.FunctionCall.Move.Right -> "движение вправо"
-        VisualSymbol.Statement.FunctionCall.Move.Up -> "движение вверх"
-        is VisualSymbol.Statement.FunctionCall.SetLevel -> "установки уровня ${symbol.name}"
-        VisualSymbol.Statement.FunctionCall.Use -> "применить"
+        VisualSymbol.FunctionCall.Move.Down -> "движение вниз"
+        VisualSymbol.FunctionCall.Move.Left -> "движение влево"
+        VisualSymbol.FunctionCall.Move.Right -> "движение вправо"
+        VisualSymbol.FunctionCall.Move.Up -> "движение вверх"
+        is VisualSymbol.FunctionCall.SetLevel -> "установки уровня ${symbol.name}"
+        VisualSymbol.FunctionCall.Use -> "применить"
         VisualSymbol.ConditionMarker -> "если"
 
         VisualSymbol.Expression.Empty,

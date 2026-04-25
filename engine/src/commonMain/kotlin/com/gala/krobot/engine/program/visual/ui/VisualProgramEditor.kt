@@ -260,12 +260,12 @@ private fun RowScope.Symbol(
         is VisualSymbol.FunctionDefinitionMarker -> TextSymbol("f", isDefinition = true)
         VisualSymbol.Statement.VariableDefinitionMarker -> TextSymbol("v", isDefinition = true)
 
-        is VisualSymbol.Statement.FunctionCall.Move.Up -> Arrow(rotateDegree = 0f)
-        is VisualSymbol.Statement.FunctionCall.Move.Right -> Arrow(rotateDegree = 90f)
-        is VisualSymbol.Statement.FunctionCall.Move.Down -> Arrow(rotateDegree = 180f)
-        is VisualSymbol.Statement.FunctionCall.Move.Left -> Arrow(rotateDegree = 270f)
+        is VisualSymbol.FunctionCall.Move.Up -> Arrow(rotateDegree = 0f)
+        is VisualSymbol.FunctionCall.Move.Right -> Arrow(rotateDegree = 90f)
+        is VisualSymbol.FunctionCall.Move.Down -> Arrow(rotateDegree = 180f)
+        is VisualSymbol.FunctionCall.Move.Left -> Arrow(rotateDegree = 270f)
 
-        is VisualSymbol.Statement.FunctionCall.SetLevel -> TextSymbol("уровень $levelName")
+        is VisualSymbol.FunctionCall.SetLevel -> TextSymbol("уровень $levelName")
 
         VisualSymbol.Bracket.Curly.Close -> TextSymbol("}", textAlign = TextAlign.Start)
         VisualSymbol.Bracket.Curly.Open -> TextSymbol("{")
@@ -273,15 +273,15 @@ private fun RowScope.Symbol(
         VisualSymbol.Bracket.Round.Open -> TextSymbol("(")
 
         is VisualSymbol.Identifier -> TextSymbol(symbol.name)
-        is VisualSymbol.Statement.FunctionCall.User -> TextSymbol(symbol.name.name)
+        is VisualSymbol.FunctionCall.User -> TextSymbol(symbol.name.name)
 
         is VisualSymbol.VariableUsage -> TextSymbol(symbol.name.name)
         is VisualSymbol.ParameterUsage -> TextSymbol(symbol.name.name)
         is VisualSymbol.Literal -> TextSymbol(symbol.value.toString())
 
-        VisualSymbol.Get -> ImageSymbol(Res.drawable.get)
-        VisualSymbol.Statement.FunctionCall.Use -> ImageSymbol(Res.drawable.use)
-        VisualSymbol.Equal -> TextSymbol("равно")
+        VisualSymbol.FunctionCall.Get -> ImageSymbol(Res.drawable.get)
+        VisualSymbol.FunctionCall.Use -> ImageSymbol(Res.drawable.use)
+        VisualSymbol.FunctionCall.Equal -> TextSymbol("равно")
 
         VisualSymbol.Statement.Return ->
             ImageSymbol(

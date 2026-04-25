@@ -133,8 +133,20 @@ class ProgramRobotController(
             }
 
             is Token.Equal -> {
-                val what = numberValue(returningValue(expression.what, parameters, variables))
-                val to = numberValue(returningValue(expression.to, parameters, variables))
+                val what = numberValue(
+                    returningValue(
+                        requireNotNull(expression.what) { "what must be set" },
+                        parameters,
+                        variables,
+                    )
+                )
+                val to = numberValue(
+                    returningValue(
+                        requireNotNull(expression.to) { "to must be set" },
+                        parameters,
+                        variables,
+                    )
+                )
                 if (what == to) Value.Logical.True else Value.Logical.False
             }
 

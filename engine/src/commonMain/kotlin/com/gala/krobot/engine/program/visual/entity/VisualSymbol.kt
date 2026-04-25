@@ -13,7 +13,7 @@ sealed interface VisualSymbol {
 
         companion object {
             private fun allBuiltIn(): List<Expression> =
-                listOf(Get, Equal) + Literal.all()
+                listOf(FunctionCall.Get, FunctionCall.Equal) + Literal.all()
 
             fun all(
                 parameterNames: List<Identifier>,
@@ -25,7 +25,69 @@ sealed interface VisualSymbol {
                         parameterNames.map { ParameterUsage(it) } +
                         functionDefinitions
                             .filter { it.hasReturnValue }
-                            .map { Statement.FunctionCall.User(it.name) }
+                            .map { FunctionCall.User(it.name) }
+        }
+    }
+
+    @Serializable
+    sealed interface FunctionCall {
+
+        @Serializable
+        sealed interface Move : FunctionCall, Statement {
+
+            @[Serializable SerialName("left")]
+            data object Left : Move
+
+            @[Serializable SerialName("right")]
+            data object Right : Move
+
+            @[Serializable SerialName("up")]
+            data object Up : Move
+
+            @[Serializable SerialName("down")]
+            data object Down : Move
+
+            companion object Companion {
+                fun all(): List<Move> = listOf(Left, Right, Up, Down)
+            }
+        }
+
+        @[Serializable SerialName("setLevel")]
+        data class SetLevel(val name: String) : FunctionCall, Statement
+
+        @[Serializable SerialName("use")]
+        data object Use : FunctionCall, Statement
+
+        @[Serializable SerialName("user")]
+        data class User(val name: Identifier) : FunctionCall, Expression, Statement
+
+        @[Serializable SerialName("get")]
+        data object Get : FunctionCall, Expression
+
+        @[Serializable SerialName("equal")]
+        data object Equal : FunctionCall, Expression
+
+        companion object {
+            fun allStatements(
+                definitions: List<VisualFunctionDefinition>,
+                levelName: String,
+            ): List<Statement> =
+                allStaticStatements(levelName) + allNonRunStatements(definitions)
+
+            private fun allStaticStatements(levelName: String): List<Statement> = listOf(
+                *Move.all().toTypedArray(),
+                Use,
+                SetLevel(levelName),
+            )
+
+            private fun allNonRunStatements(
+                definitions: List<VisualFunctionDefinition>,
+            ): List<Statement> {
+                val defs = definitions
+                    .filter { it.name != Identifier.Run }
+                    .map { User(name = it.name) }
+                return defs
+            }
         }
     }
 
@@ -41,74 +103,12 @@ sealed interface VisualSymbol {
     @Serializable
     sealed interface Statement : VisualSymbol {
 
-        @Serializable
-        sealed interface FunctionCall : Statement {
-
-            @Serializable
-            sealed interface Move : FunctionCall {
-
-                @[Serializable SerialName("left")]
-                data object Left : Move
-
-                @[Serializable SerialName("right")]
-                data object Right : Move
-
-                @[Serializable SerialName("up")]
-                data object Up : Move
-
-                @[Serializable SerialName("down")]
-                data object Down : Move
-
-                companion object Companion {
-                    fun all(): List<Move> = listOf(Left, Right, Up, Down)
-                }
-            }
-
-            @[Serializable SerialName("setLevel")]
-            data class SetLevel(val name: String) : FunctionCall
-
-            @[Serializable SerialName("use")]
-            data object Use : FunctionCall
-
-            @[Serializable SerialName("user")]
-            data class User(val name: Identifier) : FunctionCall, Expression
-
-            companion object {
-                fun allExceptRun(
-                    definitions: List<VisualFunctionDefinition>,
-                    levelName: String,
-                ): List<FunctionCall> =
-                    allStatic(levelName) + allNonRunFunctions(definitions)
-
-                private fun allStatic(levelName: String): List<FunctionCall> = listOf(
-                    *Move.all().toTypedArray(),
-                    Use,
-                    SetLevel(levelName),
-                )
-
-                private fun allNonRunFunctions(
-                    definitions: List<VisualFunctionDefinition>,
-                ): List<FunctionCall> {
-                    val defs = definitions
-                        .filter { it.name != Identifier.Run }
-                        .map { User(name = it.name) }
-                    return defs
-                }
-            }
-        }
-
         @[Serializable SerialName("return")]
         data object Return : Statement
 
         @[Serializable SerialName("variableDefinitionMarker")]
         data object VariableDefinitionMarker : Statement
     }
-
-    @[Serializable SerialName("get")]
-    data object Get : Expression
-
-    @[Serializable SerialName("equal")]
-    data object Equal : Expression
 
     @[Serializable SerialName("variableUsage")]
     data class VariableUsage(val name: Identifier) : Expression

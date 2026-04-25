@@ -33,7 +33,9 @@ data class VisualFunctionDefinition(
     )
 
     @Transient
-    val name = requireNotNull(lines.first { it.isFunctionDefinition }.firstIdentifier)
+    val name = requireNotNull(lines.first { it.isFunctionDefinition }.firstIdentifier) {
+        "function name must not be null"
+    }
 
     @Transient
     val parameterName: VisualSymbol.Identifier? =

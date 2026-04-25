@@ -146,7 +146,7 @@ data class ActionSet(
 
         private fun statements(program: VisualProgram) = ActionSet(
             type = Type.AddStatement,
-            actions = VisualSymbol.Statement.FunctionCall.allExceptRun(
+            actions = VisualSymbol.FunctionCall.allStatements(
                 definitions = program.functionDefinitions,
                 levelName = program.levelName,
             ).map { call ->

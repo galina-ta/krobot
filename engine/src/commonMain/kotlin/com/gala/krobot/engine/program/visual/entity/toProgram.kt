@@ -35,31 +35,31 @@ private fun getStatements(lines: List<VisualProgramLine>): List<Token.Statement>
             .firstOrNull()
         val followingSymbols = line.symbols.drop(1)
         when (firstSymbol) {
-            is VisualSymbol.Statement.FunctionCall.Move -> {
+            is VisualSymbol.FunctionCall.Move -> {
                 val stepCount = line
                     .parameterSymbol<VisualSymbol.Expression>(0)
                     ?.toToken(followingSymbols)
                 add(
                     when (firstSymbol) {
-                        VisualSymbol.Statement.FunctionCall.Move.Down ->
+                        VisualSymbol.FunctionCall.Move.Down ->
                             Down(stepCount)
 
-                        VisualSymbol.Statement.FunctionCall.Move.Left ->
+                        VisualSymbol.FunctionCall.Move.Left ->
                             Left(stepCount)
 
-                        VisualSymbol.Statement.FunctionCall.Move.Right ->
+                        VisualSymbol.FunctionCall.Move.Right ->
                             Right(stepCount)
 
-                        VisualSymbol.Statement.FunctionCall.Move.Up ->
+                        VisualSymbol.FunctionCall.Move.Up ->
                             Up(stepCount)
                     }
                 )
             }
 
-            is VisualSymbol.Statement.FunctionCall.SetLevel ->
+            is VisualSymbol.FunctionCall.SetLevel ->
                 add(SetLevel(firstSymbol.name))
 
-            is VisualSymbol.Statement.FunctionCall.User -> {
+            is VisualSymbol.FunctionCall.User -> {
                 val expressionSymbol = line.parameterSymbol<VisualSymbol.Expression>(0)
                 add(
                     DefinedFunction(
@@ -69,7 +69,7 @@ private fun getStatements(lines: List<VisualProgramLine>): List<Token.Statement>
                 )
             }
 
-            VisualSymbol.Statement.FunctionCall.Use -> {
+            VisualSymbol.FunctionCall.Use -> {
                 val expressionSymbol = line.parameterSymbol<VisualSymbol.Expression>(0)
                 add(
                     Use(
@@ -88,8 +88,12 @@ private fun getStatements(lines: List<VisualProgramLine>): List<Token.Statement>
             }
 
             VisualSymbol.Statement.VariableDefinitionMarker -> {
-                val identifier = requireNotNull(line.firstIdentifier)
-                val expressionSymbol = requireNotNull(line.firstExpression)
+                val identifier = requireNotNull(line.firstIdentifier) {
+                    "variable identifier must not be null"
+                }
+                val expressionSymbol = requireNotNull(line.firstExpression) {
+                    "variable expression must not be null"
+                }
                 add(
                     VariableDefinition(
                         name = identifier.name,
@@ -99,7 +103,9 @@ private fun getStatements(lines: List<VisualProgramLine>): List<Token.Statement>
             }
 
             VisualSymbol.ConditionMarker -> {
-                val predicate = requireNotNull(line.firstExpression)
+                val predicate = requireNotNull(line.firstExpression) {
+                    "condition predicate must not be null"
+                }
                 lineIndex++
                 var blockLine = lines[lineIndex]
                 val blockLines = mutableListOf<VisualProgramLine>()
@@ -124,12 +130,12 @@ private fun getStatements(lines: List<VisualProgramLine>): List<Token.Statement>
             is VisualSymbol.VariableUsage,
             is VisualSymbol.Literal,
             VisualSymbol.Expression.Empty,
-            VisualSymbol.Get,
+            VisualSymbol.FunctionCall.Get,
+            VisualSymbol.FunctionCall.Equal,
             VisualSymbol.Assign,
             VisualSymbol.Remove,
             VisualSymbol.Space,
             VisualSymbol.Comma,
-            VisualSymbol.Equal,
             null -> Unit
         }
         lineIndex++
@@ -140,11 +146,11 @@ private fun VisualSymbol.Expression.toToken(
     followingSymbols: List<VisualSymbol>,
 ): Token.Expression = when (this) {
     VisualSymbol.Expression.Empty -> Token.Expression.Empty
-    VisualSymbol.Get -> Token.Get
+    VisualSymbol.FunctionCall.Get -> Token.Get
     is VisualSymbol.Literal -> Token.Literal(value = value)
     is VisualSymbol.ParameterUsage -> Token.ParameterUsage(name.name)
     is VisualSymbol.VariableUsage -> Token.VariableUsage(name.name)
-    is VisualSymbol.Statement.FunctionCall.User ->
+    is VisualSymbol.FunctionCall.User ->
         DefinedFunction(
             name = name.name,
             parameter = followingSymbols.parameterSymbol<VisualSymbol.Expression>(0)?.toToken(
@@ -152,16 +158,12 @@ private fun VisualSymbol.Expression.toToken(
             )
         )
 
-    VisualSymbol.Equal -> Equal(
-        what = requireNotNull(
-            followingSymbols.parameterSymbol<VisualSymbol.Expression>(0)?.toToken(
-                followingSymbols = followingSymbols.parameterSymbols()
-            )
+    VisualSymbol.FunctionCall.Equal -> Equal(
+        what = followingSymbols.parameterSymbol<VisualSymbol.Expression>(0)?.toToken(
+            followingSymbols = followingSymbols.parameterSymbols()
         ),
-        to = requireNotNull(
-            followingSymbols.parameterSymbol<VisualSymbol.Expression>(1)?.toToken(
-                followingSymbols = followingSymbols.parameterSymbols()
-            )
+        to = followingSymbols.parameterSymbol<VisualSymbol.Expression>(1)?.toToken(
+            followingSymbols = followingSymbols.parameterSymbols()
         )
     )
 }

@@ -11,8 +11,3 @@ fun setVisualProgram(string: String) {
     println("setVisualProgram, program=$program")
     updateVisualProgram(program)
 }
-
-fun printVisualProgram(program: VisualProgram) {
-    val string = encodeProgram(program)
-    println(string)
-}

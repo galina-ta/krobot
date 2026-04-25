@@ -41,7 +41,6 @@ fun Robot(
             VisualProgramEditorViewModel(
                 levelName = levelName,
                 programUpdated = { visualProgram ->
-                    printVisualProgram(visualProgram)
                     program = visualProgram.toProgram()
                 }
             )

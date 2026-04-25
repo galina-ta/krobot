@@ -49,7 +49,7 @@ sealed interface Token {
 
     data object Get : Expression
 
-    data class Equal(val what: Expression, val to: Expression) : Expression
+    data class Equal(val what: Expression?, val to: Expression?) : Expression
 
     data class FunctionDefinition(
         val name: String,

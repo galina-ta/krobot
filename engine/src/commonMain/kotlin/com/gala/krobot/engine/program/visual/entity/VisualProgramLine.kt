@@ -21,7 +21,7 @@ data class VisualProgramLine(
 
     @Transient
     val isFunctionCall: Boolean =
-        symbols.any { it is VisualSymbol.Statement.FunctionCall }
+        symbols.any { it is VisualSymbol.FunctionCall }
 
     @Transient
     val hasOpenedRoundBracket: Boolean =
@@ -59,49 +59,52 @@ data class VisualProgramLine(
         definitions: List<VisualFunctionDefinition>,
     ): List<VisualSymbol.Identifier> {
         val functionCall = symbols
-            .filterIsInstance<VisualSymbol.Statement.FunctionCall>()
+            .filterIsInstance<VisualSymbol.FunctionCall>()
             .firstOrNull()
         return when (functionCall) {
-            is VisualSymbol.Statement.FunctionCall.Move ->
+            is VisualSymbol.FunctionCall.Move ->
                 listOf(VisualSymbol.Identifier.StepCount)
 
-            is VisualSymbol.Statement.FunctionCall.Use ->
+            is VisualSymbol.FunctionCall.Use ->
                 listOf(
                     VisualSymbol.Identifier.Code,
                     VisualSymbol.Identifier.Key,
                 )
 
-            VisualSymbol.Equal ->
+            VisualSymbol.FunctionCall.Equal ->
                 listOf(
                     VisualSymbol.Identifier.What,
                     VisualSymbol.Identifier.To,
                 )
 
-            is VisualSymbol.Statement.FunctionCall.User -> {
+            is VisualSymbol.FunctionCall.User -> {
                 val definition = definitions.find { it.name == functionCall.name }
                 listOfNotNull(definition?.parameterName)
             }
 
-            is VisualSymbol.Statement.FunctionCall.SetLevel,
+            is VisualSymbol.FunctionCall.SetLevel,
+            VisualSymbol.FunctionCall.Get,
             null -> emptyList()
         }
     }
 
     fun functionParametersCount(definitions: List<VisualFunctionDefinition>): Int {
         val functionCall = symbols
-            .filterIsInstance<VisualSymbol.Statement.FunctionCall>()
+            .filterIsInstance<VisualSymbol.FunctionCall>()
             .firstOrNull()
         return when (functionCall) {
-            is VisualSymbol.Statement.FunctionCall.Move -> 1
-            is VisualSymbol.Statement.FunctionCall.Use -> 1
-            VisualSymbol.Equal -> 2
+            is VisualSymbol.FunctionCall.Move -> 1
+            is VisualSymbol.FunctionCall.Use -> 1
+            VisualSymbol.FunctionCall.Equal -> 2
 
-            is VisualSymbol.Statement.FunctionCall.User -> {
+            is VisualSymbol.FunctionCall.User -> {
                 val definition = definitions.find { it.name == functionCall.name }
                 if (definition?.parameterName != null) 1 else 0
             }
 
-            is VisualSymbol.Statement.FunctionCall.SetLevel, null -> 0
+            is VisualSymbol.FunctionCall.SetLevel,
+            VisualSymbol.FunctionCall.Get,
+            null -> 0
         }
     }
 
