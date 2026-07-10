@@ -24,42 +24,35 @@ data class ActionSet(
                 )
 
                 selectedLine.isFunctionDefinition -> listOfNotNull(
+                    if (selectedLine.hasOpenedRoundBracket)
+                        parameterDefinitionIdentifiers
+                    else
+                        null,
+                    functionIdentifiers,
+                    statements(program),
                     general(
                         canDefineVariable = true,
                         canDefineParameter = true,
                         hasParameter = selectedLine.hasOpenedRoundBracket,
                         canReturn = true,
                     ),
-                    functionIdentifiers,
-                    statements(program),
-                    if (selectedLine.hasOpenedRoundBracket)
-                        parameterDefinitionIdentifiers
-                    else
-                        null,
                 )
 
                 selectedLine.isVariableDefinition -> listOfNotNull(
-                    general(canDefineVariable = true, canReturn = true),
                     variableDefinitionIdentifiers,
-                    statements(program),
                     expressions(
                         parameterNames = listOfNotNull(selectedFunction.parameterName),
                         variableDefinitionNames = selectedFunction.variableDefinitionNames,
                         functionDefinitions = program.functionDefinitions,
                     ),
+                    statements(program),
+                    general(canDefineVariable = true, canReturn = true),
                 )
 
                 selectedLine.isFunctionCall -> {
                     val parametersCount =
                         selectedLine.functionParametersCount(program.functionDefinitions)
                     listOfNotNull(
-                        general(
-                            canDefineVariable = true,
-                            parametersCount = parametersCount,
-                            hasParameter = selectedLine.hasOpenedRoundBracket,
-                            canReturn = true,
-                        ),
-                        statements(program),
                         *if (selectedLine.hasOpenedRoundBracket)
                             arrayOf(
                                 *(0..<parametersCount).map { index ->
@@ -79,43 +72,50 @@ data class ActionSet(
                             )
                         else
                             emptyArray(),
+                        statements(program),
+                        general(
+                            canDefineVariable = true,
+                            parametersCount = parametersCount,
+                            hasParameter = selectedLine.hasOpenedRoundBracket,
+                            canReturn = true,
+                        ),
                     )
                 }
 
                 selectedLine.isReturnStatement -> listOfNotNull(
-                    general(
-                        canDefineVariable = true,
-                        canReturn = true,
-                    ),
-                    statements(program),
                     expressions(
                         parameterNames = listOfNotNull(selectedFunction.parameterName),
                         variableDefinitionNames = selectedFunction.variableDefinitionNames,
                         functionDefinitions = program.functionDefinitions,
+                    ),
+                    statements(program),
+                    general(
+                        canDefineVariable = true,
+                        canReturn = true,
                     ),
                 )
 
                 selectedLine.isCondition -> listOfNotNull(
-                    general(
-                        canDefineVariable = true,
-                        canReturn = true,
-                    ),
-                    statements(program),
                     expressions(
                         parameterNames = listOfNotNull(selectedFunction.parameterName),
                         variableDefinitionNames = selectedFunction.variableDefinitionNames,
                         functionDefinitions = program.functionDefinitions,
                     ),
+                    statements(program),
+                    general(
+                        canDefineVariable = true,
+                        canReturn = true,
+                    ),
                 )
 
                 selectedLine.isBlockEnd -> listOfNotNull(
+                    statements(program),
                     general(
                         canDefineVariable = true,
                         canDefineParameter = true,
                         hasParameter = selectedLine.hasOpenedRoundBracket,
                         canReturn = true,
                     ),
-                    statements(program),
                 )
 
                 else -> throw IllegalStateException("incorrect selectedLine, selectedLine=$selectedLine")
