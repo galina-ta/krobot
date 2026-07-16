@@ -117,14 +117,15 @@ class KeyBlock(position: Position) : Block(position) {
 
 class ConditionalLockBlock(
     position: Position,
-    number: Int,
+    private val number: Int,
 ) : Block(position) {
     override val asset = Asset.ConditionalLock(number)
 
     override fun beforeRobotMove(robotState: RobotState): RobotState? {
+        val lockNumber = robotState.openedConditionalLockNumber
         return if (
             robotState.position == position &&
-            requireNotNull(robotState.openedConditionalLockNumber) !in robotState.collected
+            (lockNumber == null || lockNumber.value != number)
         ) {
             robotState.destroyed().withSource(source = this)
         } else {
