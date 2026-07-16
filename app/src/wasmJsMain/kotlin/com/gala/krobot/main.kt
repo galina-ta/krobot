@@ -55,12 +55,6 @@ fun main() {
     }
 }
 
-private fun String.toUrlLevel(): String =
-    replace('\n', '|')
-
-private fun String.toLevelDraw(): String =
-    replace('|', '\n')
-
 private const val LEVEL_EDITOR_KEY = "levelEditor"
 private const val LEVEL_KEY = "level"
 private const val LEVEL_NAME_KEY = "levelName"

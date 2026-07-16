@@ -12,10 +12,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.Clipboard
 import androidx.compose.ui.platform.LocalClipboard
 import androidx.compose.ui.unit.dp
 
-@OptIn(ExperimentalComposeUiApi::class, ExperimentalWasmJsInterop::class)
+@OptIn(ExperimentalComposeUiApi::class)
 @Composable
 fun SaveRestoreCode(
     currentProgramString: () -> String,
@@ -26,11 +27,7 @@ fun SaveRestoreCode(
     Button(onClick = {
         val programString = currentProgramString()
         programTextValue = programString
-        try {
-            clipboard.nativeClipboard.writeText(programString)
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
+        clipboard.setText(programString)
     }) {
         Text("Сохранить")
     }
@@ -51,3 +48,5 @@ fun SaveRestoreCode(
         Text("Восстановить")
     }
 }
+
+internal expect fun Clipboard.setText(text: String)

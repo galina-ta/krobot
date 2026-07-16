@@ -50,6 +50,8 @@ kotlin {
             implementation(compose.ui)
             implementation(compose.material3)
             implementation(projects.engine)
+            implementation(libs.kotlinxSerializationJson)
+            implementation(libs.ktorClientCore)
         }
         androidMain.dependencies {
             implementation(libs.androidxCoreKtx)
@@ -60,8 +62,6 @@ kotlin {
         }
         wasmJsMain.dependencies {
             implementation(libs.kotlinxBrowser)
-            implementation(libs.ktorClientCore)
-            implementation(libs.kotlinxSerializationJson)
         }
     }
 }
@@ -72,7 +72,7 @@ android {
 
     defaultConfig {
         applicationId = "com.gala.krobot"
-        minSdk = 21
+        minSdk = 23
         targetSdk = 36
         versionCode = 1
         versionName = "1.0"

@@ -9,41 +9,44 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
-import com.gala.krobot.global.globalRobotController
+import com.gala.krobot.engine.level.entity.parseLevel
 import com.gala.krobot.ui.theme.KrobotTheme
-import com.gala.krobot.engine.level.LevelViewModel
-import com.gala.krobot.engine.level.CreateRobotControllerHolder
-import com.gala.krobot.engine.level.ui.LevelScreen
-import com.gala.krobot.engine.level.impls.RobotExecutorImpl
-import com.gala.krobot.engine.level.impls.RobotStatesApplierImpl
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.SupervisorJob
+import io.ktor.http.decodeURLPart
 
 class MainActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        val createRobotControllerHolder = CreateRobotControllerHolder()
+//        val createRobotControllerHolder = CreateRobotControllerHolder()
+//
+//        val robotController = createRobotController()
+//        globalRobotController = robotController
+//        createRobotControllerHolder.instance = { robotController }
 
-        val robotController = createRobotController()
-        globalRobotController = robotController
-        createRobotControllerHolder.instance = { robotController }
-
-        val viewModel = LevelViewModel(
-            createRobotControllerHolder = createRobotControllerHolder,
-            executor = RobotExecutorImpl(),
-            statesApplier = RobotStatesApplierImpl(),
-            scope = CoroutineScope(Dispatchers.Main.immediate + SupervisorJob()),
-        )
+        val urlLevel = "00000|0s++0|00o00|0+++0|0+0+0|0%3F0%3F0|0+0+0|0+++0|00f00|00000"
+            .decodeURLPart()
+            .replace("+", " ")
+        val levelDraw = urlLevel.toLevelDraw()
+        val level = parseLevel(levelDraw)
 
         enableEdgeToEdge()
         setContent {
             KrobotTheme {
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
                     Box(modifier = Modifier.padding(innerPadding)) {
-                        LevelScreen(viewModel)
+                        App(
+                            isLevelEditor = false,
+                            level = level,
+                            levelDraw = levelDraw,
+                            levelName = "Demo",
+                            levelEditorRequested = {
+                                // Do nothing for now
+                            },
+                            compileClicked = { levelDraw ->
+                                // Do nothing for now
+                            },
+                        )
                     }
                 }
             }
