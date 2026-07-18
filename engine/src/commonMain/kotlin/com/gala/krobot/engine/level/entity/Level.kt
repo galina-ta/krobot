@@ -21,7 +21,10 @@ data class Level(
     private val conditionalLocksCount = blocks.count { it is ConditionalLockBlock }
 
     fun newRobotState(): RobotState {
-        val state = initialRobotState.withRandomOpenedConditionalLockNumber(conditionalLocksCount)
+        val state = if (conditionalLocksCount != 0)
+            initialRobotState.withRandomOpenedConditionalLockNumber(conditionalLocksCount)
+        else
+            initialRobotState
         blocks.forEach { it.afterRobotStateCreate(state) }
         return state
     }
