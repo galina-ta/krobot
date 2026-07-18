@@ -93,10 +93,15 @@ fun VisualProgramEditor(
                             )
                         }
                     }
-                    Comment(
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        line = line,
-                    )
+                    when (hint) {
+                        Hint.Comment -> {
+                            Comment(
+                                modifier = Modifier.align(Alignment.CenterVertically),
+                                line = line,
+                            )
+                        }
+                        null -> Unit
+                    }
                 }
             }
         }
@@ -301,3 +306,9 @@ private fun RowScope.Symbol(
 }
 
 private val defaultSymbolSide = 30.dp
+
+private val hint: Hint? = null
+
+enum class Hint {
+    Comment,
+}
