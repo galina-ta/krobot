@@ -36,7 +36,7 @@ fun TopBar(
         ) {
             Text(
                 text = when (router.currentRoute) {
-                    Route.Robot.CodeEditor -> "Уровень"
+                    Route.Robot.CodeEditor -> "Проект"
                     Route.Robot.Level -> "Код"
                     Route.LevelEditor -> throw IllegalStateException("LevelEditor has no TopBar")
                 }

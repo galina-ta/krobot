@@ -270,7 +270,7 @@ private fun RowScope.Symbol(
         is VisualSymbol.FunctionCall.Move.Down -> Arrow(rotateDegree = 180f)
         is VisualSymbol.FunctionCall.Move.Left -> Arrow(rotateDegree = 270f)
 
-        is VisualSymbol.FunctionCall.SetLevel -> TextSymbol("уровень $levelName")
+        is VisualSymbol.FunctionCall.SetLevel -> TextSymbol("проект $levelName")
 
         VisualSymbol.Bracket.Curly.Close -> TextSymbol("}", textAlign = TextAlign.Start)
         VisualSymbol.Bracket.Curly.Open -> TextSymbol("{")
