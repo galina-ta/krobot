@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Луна — запись миссии</title>
+
+<script type="module">
+import init, * as bindings from './moonweb-cddc72176eb47df3.js';
+const wasm = await init({ module_or_path: './moonweb-e454b3f3bd72736a_bg.wasm' });
+
+
+window.wasmBindings = bindings;
+
+
+dispatchEvent(new CustomEvent("TrunkApplicationStarted", {detail: {wasm}}));
+
+</script>
+<link rel="icon" href="data:,">
+<!-- For `trunk serve`: the pictures where the site has them, next to the page of Physical IDE. CI does not publish this copy. -->
+
+<style>
+html, body { margin: 0; height: 100%; background: #000; overflow: hidden; color: #eee; font: 15px system-ui, sans-serif; }
+canvas { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; }
+header { position: fixed; left: 12px; top: 10px; right: 12px; text-shadow: 0 1px 3px #000; pointer-events: none; }
+header b { font-size: 18px; margin-right: 10px; }
+#message, #picker { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%); max-width: min(560px, calc(100vw - 32px));
+  background: rgba(0, 0, 0, .72); padding: 14px 18px; border-radius: 8px; text-align: center; display: none; }
+#picker { top: calc(50% + 70px); }
+#controls { position: fixed; left: 12px; right: 12px; bottom: 12px; display: none; gap: 10px; align-items: center;
+  background: rgba(0, 0, 0, .55); padding: 6px 10px; border-radius: 8px; }
+#controls button { background: #333; color: #eee; border: 1px solid #555; border-radius: 6px; padding: 4px 10px; font: inherit; cursor: pointer; white-space: nowrap; }
+#scrub { flex: 1; min-width: 60px; }
+#time { font-variant-numeric: tabular-nums; white-space: nowrap; }
+</style>
+<link rel="modulepreload" href="./moonweb-cddc72176eb47df3.js" crossorigin="anonymous" integrity="sha384-hMs0Djstxech7MPZi+NV8Uf1K6PxWf5WyEftuSF3tftjFDgbWNAKL4bO0HIrzLoq"><link rel="preload" href="./moonweb-e454b3f3bd72736a_bg.wasm" crossorigin="anonymous" integrity="sha384-usyJ1cIKipWXUtuSLmGZxHgDsEmcYPCTOAbjxYT/R8OyC2M7WUr0SXwhs+ps7xKb" as="fetch" type="application/wasm"></head>
+<body>
+<canvas id="moon"></canvas>
+<header><b id="project"></b><span id="variant"></span></header>
+<div id="message"></div>
+<div id="picker">
+  <p>Откройте файл записи <code>*.запись.json</code> из артефактов миссии или перетащите его на страницу.</p>
+  <input id="file" type="file" accept=".json,application/json">
+</div>
+<div id="controls">
+  <button id="play">⏸ Пауза</button>
+  <input id="scrub" type="range" min="0" max="1000" value="0">
+  <span id="time">0:00 / 0:00</span>
+  <button id="fullscreen" title="Во весь экран">⛶</button>
+</div>
+</body>
+</html>
